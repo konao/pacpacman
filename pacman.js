@@ -1,5 +1,5 @@
 // **********************************************
-//  パクパクマン
+//  プレーヤーキャラ（パクパクマン）
 // **********************************************
 
 const { Entity } = require('./entity');
@@ -99,7 +99,7 @@ class Pacman extends Entity {
         for (let imgName of pacImageNames) {
             // PIXI.Texture.fromに与える文字列(ID)はimage/character.jsonに記述されている
             let spr = new PIXI.Sprite(PIXI.Texture.from(imgName));
-            spr.visible = false;
+            spr.visible = (imgName === 'pac00') ? true : false;
             container.addChild(spr);
             this._pac.push(spr);
         }
