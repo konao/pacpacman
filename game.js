@@ -17,7 +17,7 @@ class Game {
         // 現在のシーンオブジェクト
         this._currScene = null;
 
-        // 各シーンオブジェクト
+        // 各シーンオブジェクト（先に作っておく）
         this._titleScene = new TitleScene();
         this._gameScene = new GameScene();
     }

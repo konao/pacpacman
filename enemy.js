@@ -80,7 +80,6 @@ class Enemy extends Entity {
 
         for (let i=0; i<4; i++) {
             let sprName = cname + i.toString();
-            console.log(sprName);
             let m = new PIXI.Sprite(PIXI.Texture.from(sprName));
             m.visible = false;
             container.addChild(m);
@@ -237,7 +236,7 @@ class Enemy extends Entity {
 
         if (U.randDouble(1.0) < 0.2) {
             // ランダムに方向を選ぶ
-            console.log('random');
+            // console.log('random');
             let ind = U.randInt(cands.length);
             let cand = cands[ind];
             retVal = {
@@ -247,7 +246,7 @@ class Enemy extends Entity {
             }
         } else {
             // 最短の方向を選ぶ
-            console.log('nearest');
+            // console.log('nearest');
             let minDist2 = -1;
             for (let cand of cands) {
                 if (cand.dist2 > 0) {
@@ -264,6 +263,16 @@ class Enemy extends Entity {
         }
         
         return retVal;
+    }
+
+    // @param pos 衝突判定対象位置({x, y})
+    //
+    // @return true(=衝突している), false(=していない)
+    detectCollision(pos) {
+        let dist2 = Math.pow((pos.x - this._x), 2) + Math.pow((pos.y - this._y), 2);
+        let d = Math.pow(0.9, 2);
+
+        return (dist2 < d) ? true : false;
     }
 
     updateSprite() {

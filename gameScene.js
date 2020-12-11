@@ -45,7 +45,7 @@ class GameScene {
         // ランダムにn個のウェイポイントを選び出す
         // ---> そこをモンスターの位置とする
         this._enemies = [];
-        const nEnemies = 5; // ****** モンスターの数 ******
+        const nEnemies = 10; // ****** モンスターの数 ******
         let wps = this._stage.getRandomWayPoints(nEnemies);
         for (let i=0; i<nEnemies; i++) {
             let kind = Utils.randInt(4);
@@ -79,12 +79,12 @@ class GameScene {
         }
 
         this._hiScore.initSprite(PIXI, this._container);
-        this._hiScore.setPos(1150, 20);
+        this._hiScore.setPos(1150, 100);
         this._hiScore.setFontSize(30);
         this._hiScore.setValue(38000);
 
         this._score.initSprite(PIXI, this._container);
-        this._score.setPos(1150, 100);
+        this._score.setPos(1150, 20);
         this._score.setFontSize(30);
         this._score.setValue(1200);
 
@@ -120,8 +120,8 @@ class GameScene {
         // パックマン移動
         if (this._pacman) {
             this._pacman.move();
-            let eatCount = this._pacman.detectCollision(this._stage);
 
+            let eatCount = this._pacman.detectCollision(this._stage);
             this._score.incrValue(eatCount * 10);
         }
 
@@ -131,6 +131,12 @@ class GameScene {
                 let enemy = this._enemies[i];
                 enemy.move(this._pacman.getPos());
                 enemy.updateSprite();
+
+                // 衝突判定
+                if (enemy.detectCollision(this._pacman.getPos())) {
+                    // 捕まった
+                    console.log('Captured!!');
+                }
             }
         }
     }
