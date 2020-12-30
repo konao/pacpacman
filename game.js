@@ -91,7 +91,7 @@ class Game {
                     case C.RESTART:
                         // 再スタート画面
                         this._gameScene.reinitStage();
-                        this._gameScene.setVisible(true);
+                        // this._gameScene.setVisible(true);
 
                         this._currScene = this._gameScene;
                         break;

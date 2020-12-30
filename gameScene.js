@@ -51,13 +51,13 @@ class GameScene {
         // ランダムにn個のウェイポイントを選び出す
         // ---> そこをモンスターの位置とする
         this._enemies = [];
-        const nEnemies = 10; // ****** モンスターの数 ******
+        const nEnemies = 5; // ****** モンスターの数 ******
         let wps = this._stage.getRandomWayPoints(nEnemies);
         for (let i=0; i<nEnemies; i++) {
             let kind = Utils.randInt(4);
             let enemy = new Enemy(kind);
             enemy.setPos(wps[i]);
-            console.log(`[${i}] pos=(${wps[i].x}, ${wps[i].y})`);
+            // console.log(`[${i}] pos=(${wps[i].x}, ${wps[i].y})`);
             enemy.setDirec(C.NODIR);
             enemy.setStage(this._stage);
             this._enemies.push(enemy);
@@ -65,6 +65,13 @@ class GameScene {
 
         this._score = new Score('Score');
         this._hiScore = new Score('Hi-Score');
+    }
+
+    reinitStage() {
+        // パックマンを出現させる新しい位置を計算
+        let wps = this._stage.getRandomWayPoints(1);
+        this._pacman.setPos(wps[0]);
+        this._pacman.updateSprite();
     }
 
     // @param PIXI [i] PIXIオブジェクト
@@ -174,23 +181,22 @@ class GameScene {
                             return C.GAMEOVER;
                         } else {
                             // まだいるならリスタート
-                            this._state = C.PLAY_RESTART;
                             this._pacman.stopDyingAnim();
+                            this._state = C.PLAY_NORMAL;
+                            return C.RESTART;
                         }
                     }
-
-
                 }
                 break;
 
-            case C.PLAY_RESTART:
-                {
-                    // 捕まった
-
-                    // パックマンがしおれるアニメーション
-
-                }
-                break;
+            // case C.PLAY_RESTART:
+            //     {
+            //         // プレイ再開
+            //         // 死んだ場所とは違う別のところに新たにパックマンを出現させる
+            //         this.reinitStage();
+            //         return C.PLAY;
+            //     }
+            //     break;
         }
 
         return null;

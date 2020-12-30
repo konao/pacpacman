@@ -41,11 +41,17 @@ class Pacman extends Entity {
         // 現在のスプライトインデックス
         this._curIdx = -1;
 
+        // 現在のモード（通常、死亡中）
+        this._mode = C.PLAY_NORMAL;
+
         // 死亡アニメーションカウント
         this._dyingAnimCount = 0;
 
         // 死亡アニメーション用タイマー
         this._dyingAnimTimer = 0;
+
+        // 前回showSpriteの対象となったスプライト
+        this._lastIdx = 0;
     }
 
     getDirec() {
@@ -60,43 +66,54 @@ class Pacman extends Entity {
         return this._animCount;
     }
 
-    // 進行方向とアニメーションカウントから
-    // スプライトインデックスを求める
-    getSprIdxFromDirAndAnimCount(direc, animCount) {
-        if (animCount === 0) {
-            return 0;
-        } else {
-            let base = 0;
-            switch (direc) {
-                case C.UP:
-                    base = 1;
-                    break;
-                case C.RIGHT:
-                    base = 4;
-                    break;
-                case C.DOWN:
-                    base = 7;
-                    break;
-                case C.LEFT:
-                    base = 10;
-                    break;
-                default:
-                    return 0;
-            }
+    getSprIdx() {
+        switch (this._mode) {
+            case C.PLAY_NORMAL:
+                // 進行方向とアニメーションカウントから
+                // スプライトインデックスを求める
+                {
+                    let direc = this._direc;
+                    let animCount = this._animCount;
 
-            if (animCount >= 4) {
-                animCount = MAX_ANIM_COUNT - animCount;
-            }
-            return base + (animCount-1);
+                    if (animCount === 0) {
+                        return 0;
+                    } else {
+                        let base = 0;
+                        switch (direc) {
+                            case C.UP:
+                                base = 1;
+                                break;
+                            case C.RIGHT:
+                                base = 4;
+                                break;
+                            case C.DOWN:
+                                base = 7;
+                                break;
+                            case C.LEFT:
+                                base = 10;
+                                break;
+                            default:
+                                return 0;
+                        }
+            
+                        if (animCount >= 4) {
+                            animCount = MAX_ANIM_COUNT - animCount;
+                        }
+                        return base + (animCount-1);
+                    }
+                }
+            
+            case C.PLAY_DYING:
+                // 死亡アニメーションカウントから
+                // スプライトインデックスを求める
+                {
+                    const base = 13;
+                    return base + this._dyingAnimCount;
+                }
+            
+            default:
+                return 0;
         }
-    }
-
-    // パックマンがしおれるアニメーション用のインデックス取得
-    //
-    // @param animCount [i] アニメーションカウント(0<=animCount<=9)
-    getSprIdxForDyingAnim(animCount) {
-        const base = 13;
-        return base + animCount;
     }
 
     initSprite(PIXI, container) {
@@ -122,7 +139,7 @@ class Pacman extends Entity {
 
     updateSprite() {
         if (this._pac.length > 0) {
-            let curIdx = this.getSprIdxFromDirAndAnimCount(this._direc, this._animCount);
+            let curIdx = this.getSprIdx();
             let pSprite = this._pac[curIdx];
 
             let px = Math.floor(this._x * C.IMGW);
@@ -130,6 +147,30 @@ class Pacman extends Entity {
 
             pSprite.x = px;
             pSprite.y = py;
+        }
+    }
+
+    // @param bUseLastIdx [i] trueのとき、idxに前回showSpriteが呼ばれた時の値を使う
+    // 注）なぜこのフラグが必要なのか？
+    // ---> パックマンを方向転換させたとき、this._direcがキーを推した瞬間に変わってしまうので、
+    // showSprite(false)を行う対象のスプライトが変わってしまい、方向転換前のスプライトが
+    // 消えずに残ってしまうため．
+    showSprite(bVisible, bUseLastIdx) {
+        if (bUseLastIdx) {
+            this._pac[this._lastIdx].visible = bVisible;
+        } else {
+            let curIdx = this.getSprIdx();
+            this._pac[curIdx].visible = bVisible;
+    
+            this._lastIdx = curIdx; // 保存しておく
+        }
+    }
+
+    updateAnimCount() {
+        // アニメーションカウント更新
+        this._animCount++;
+        if (this._animCount >= MAX_ANIM_COUNT) {
+            this._animCount = 0;
         }
     }
 
@@ -209,21 +250,14 @@ class Pacman extends Entity {
 
                     if (moved) {
                         // 現在のパックマンスプライトを表示offにする
-                        if (this._curIdx >= 0) {
-                            this._pac[this._curIdx].visible = false;
-                        }
+                        // offにするスプライトは、前回showSprite(true)を行ったもの
+                        this.showSprite(false, true);
 
                         // アニメーションカウント更新
-                        this._animCount++;
-                        if (this._animCount >= MAX_ANIM_COUNT) {
-                            this._animCount = 0;
-                        }
+                        this.updateAnimCount();
 
                         // 新しいパックマンスプライトを表示onにする
-                        let newIdx = this.getSprIdxFromDirAndAnimCount(direc, this._animCount);
-                        // console.log(`curIdx=${curIdx}, newIdx=${newIdx}`);
-                        this._pac[newIdx].visible = true;
-                        this._curIdx = newIdx; // 保存しておく
+                        this.showSprite(true);
                     }
                 }
             }).bind(this);
@@ -304,33 +338,28 @@ class Pacman extends Entity {
     // 死亡アニメーション開始
     startDyingAnim() {
         // 現在のスプライトを非表示にする
-        if (this._curIdx >= 0) {
-            this._pac[this._curIdx].visible = false;
-        }
+        this.showSprite(false);
+
+        // モードを変更
+        this._mode = C.PLAY_DYING;
 
         // 死亡アニメーションカウンタをリセット
         this._dyingAnimCount = 0;
         this._dyingAnimTimer = 0;
 
+        this.updateSprite();
+        
         // 新しいパックマンスプライトを表示onにする
-        let newIdx = this.getSprIdxForDyingAnim(this._dyingAnimCount);
-        // console.log(`curIdx=${curIdx}, newIdx=${newIdx}`);
-        let pSprite = this._pac[newIdx];
-        pSprite.visible = true;
-
-        let px = Math.floor(this._x * C.IMGW);
-        let py = Math.floor(this._y * C.IMGW);
-
-        pSprite.x = px;
-        pSprite.y = py;
+        this.showSprite(true);
     }
 
     // 死亡アニメーション終了
     stopDyingAnim() {
         // 現在のスプライトを非表示にする
-        if (this._curIdx >= 0) {
-            this._pac[this._curIdx].visible = false;
-        }
+        this.showSprite(false);
+
+        // モードを元に戻す
+        this._mode = C.PLAY_NORMAL;
 
         // 死亡アニメーションカウンタをリセット
         this._dyingAnimCount = 0;
@@ -339,23 +368,21 @@ class Pacman extends Entity {
     doDyingAnim() {
         this._dyingAnimTimer++;
         if (this._dyingAnimTimer >= 10) {
-            // カウンタ更新
             this._dyingAnimTimer = 0;
+
+            // 現在のスプライトを非表示にする
+            this.showSprite(false);
+
+            // カウンタ更新
             this._dyingAnimCount++;
+            if (this._dyingAnimCount >= 10) {
+                this._dyingAnimCount = 0;
+                return false;   // 返り値がfalseならアニメーション終了
+            }
 
-            // 新しいパックマンスプライトを表示onにする
-            let newIdx = this.getSprIdxForDyingAnim(this._dyingAnimCount);
-            // console.log(`curIdx=${curIdx}, newIdx=${newIdx}`);
-            let pSprite = this._pac[newIdx];
-            pSprite.visible = true;
-
-            let px = Math.floor(this._x * C.IMGW);
-            let py = Math.floor(this._y * C.IMGW);
-
-            pSprite.x = px;
-            pSprite.y = py;
-
-            return (this._dyingAnimCount <= 9) ? true : false;  // 返り値がfalseならアニメーション終了
+            // 新しいパックマンスプライトの位置を更新＆表示onにする
+            this.updateSprite();
+            this.showSprite(true);
         }
 
         return true;

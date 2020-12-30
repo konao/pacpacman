@@ -12,9 +12,10 @@ const DOWN = 3;
 const LEFT = 4;
 
 const TITLE = 0;
-const DEMO = 10;
-const PLAY = 20;
-const GAMEOVER = 30;
+const DEMO = 1;
+const PLAY = 2;
+const RESTART = 3;
+const GAMEOVER = 10;
 
 const PLAY_NORMAL = 0;
 const PLAY_POWERUP = 1;
@@ -38,10 +39,12 @@ module.exports = {
     TITLE,
     DEMO,
     PLAY,
+    RESTART,
     GAMEOVER,
 
     PLAY_NORMAL,
     PLAY_POWERUP,
+    PLAY_DYING,
     PLAY_RESTART,
 
     AKEBEE,
