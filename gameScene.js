@@ -17,8 +17,10 @@ class GameScene {
     constructor() {
         this._container = null;
 
-        // スコア
+        // スコア、残りパックマン数表示用スプライト
         this._score = null;
+        this._hiScore = null;
+        this._restPacman = null;
 
         // ステージ
         this._stage = null;
@@ -28,15 +30,15 @@ class GameScene {
 
         // 敵
         this._enemies = [];
-
-        // パックマンの残り数
-        this._pacRest = 3;
-
-        // 状態
-        this._state = C.PLAY_NORMAL;
     }
 
     initStage() {
+        // パックマンの残り数
+        this._pacRest = 2;
+
+        // 状態
+        this._state = C.PLAY_NORMAL;
+
         this._stage = new Stage();
         this._stage.generate(4, 8, 6);
         // this._stage.print();
@@ -65,6 +67,7 @@ class GameScene {
 
         this._score = new Score('Score');
         this._hiScore = new Score('Hi-Score');
+        this._restPacman = new Score('Pacman Left');
     }
 
     reinitStage() {
@@ -80,7 +83,6 @@ class GameScene {
         this._container = new PIXI.Container();
 
         // stageに対応するスプライト生成
-        console.log(`stage=${this._stage}`);
         this._stage.initSprite(PIXI, this._container);
 
         // pacmanスプライト生成
@@ -91,15 +93,20 @@ class GameScene {
             this._enemies[i].initSprite(PIXI, this._container);
         }
 
-        this._hiScore.initSprite(PIXI, this._container);
-        this._hiScore.setPos(1150, 100);
-        this._hiScore.setFontSize(30);
-        this._hiScore.setValue(38000);
-
         this._score.initSprite(PIXI, this._container);
         this._score.setPos(1150, 20);
         this._score.setFontSize(30);
-        this._score.setValue(1200);
+        this._score.setValue(0);
+
+        this._hiScore.initSprite(PIXI, this._container);
+        this._hiScore.setPos(1150, 100);
+        this._hiScore.setFontSize(30);
+        this._hiScore.setValue(0);
+
+        this._restPacman.initSprite(PIXI, this._container);
+        this._restPacman.setPos(1150, 300);
+        this._restPacman.setFontSize(30);
+        this._restPacman.setValue(this._pacRest);
 
         container.addChild(this._container);
         this.setVisible(false);
@@ -151,7 +158,9 @@ class GameScene {
                             // 衝突判定
                             if (enemy.detectCollision(this._pacman.getPos())) {
                                 // 捕まった
-                                console.log('Captured!!');
+                                this._pacRest--;
+                                this._restPacman.setValue(this._pacRest);
+
                                 this._state = C.PLAY_DYING;
                                 this._pacman.startDyingAnim();
                             }
@@ -174,8 +183,6 @@ class GameScene {
                     if (!this._pacman.doDyingAnim())
                     {
                         // アニメーション終了
-                        this._pacRest--;
-
                         if (this._pacRest === 0) {
                             // 残りが0ならゲームオーバー
                             return C.GAMEOVER;
@@ -188,15 +195,6 @@ class GameScene {
                     }
                 }
                 break;
-
-            // case C.PLAY_RESTART:
-            //     {
-            //         // プレイ再開
-            //         // 死んだ場所とは違う別のところに新たにパックマンを出現させる
-            //         this.reinitStage();
-            //         return C.PLAY;
-            //     }
-            //     break;
         }
 
         return null;

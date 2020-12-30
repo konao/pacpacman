@@ -11,22 +11,22 @@ const RIGHT = 2;
 const DOWN = 3;
 const LEFT = 4;
 
-const TITLE = 0;
-const DEMO = 1;
-const PLAY = 2;
-const RESTART = 3;
+const TITLE = 1;
+const DEMO = 2;
+const PLAY = 3;
+const RESTART = 4;
 const GAMEOVER = 10;
 
-const PLAY_NORMAL = 0;
-const PLAY_POWERUP = 1;
-const PLAY_DYING = 2;
-const PLAY_RESTART = 3;
+const PLAY_NORMAL = 1;
+const PLAY_POWERUP = 2;
+const PLAY_DYING = 3;
+const PLAY_RESTART = 4;
 
-const AKEBEE = 0;
-const PINKY = 1;
-const MIDSUKE = 2;
-const GUZUTA = 3;
-const IJIKE = 4;
+const AKEBEE = 1;
+const PINKY = 2;
+const MIDSUKE = 3;
+const GUZUTA = 4;
+const IJIKE = 5;
 
 module.exports = {
     IMGW,

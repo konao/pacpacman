@@ -15,21 +15,22 @@ class GameOverScene extends BaseScene {
 
         this._gameOverMsg = new Text();
 
-        this._startPressed = false;
+        this._count = 0;
     }
 
     initSprites(PIXI, container) {
         this._container = new PIXI.Container();
 
-        this._mainTitle
+        this._gameOverMsg
             .initSprite(PIXI, this._container)
             .setText('Game Over')
             .setFontSize(150)
             .setColor('white')  // or setColor('#ffffff') is also OK
             .setPos(350, 300);
-    
+        
         container.addChild(this._container);
 
+        this._count = 0;
         this.setVisible(true);
     }
 
@@ -39,13 +40,10 @@ class GameOverScene extends BaseScene {
         }
     }
 
-    onSpacePressed() {
-        // ゲーム開始
-        this._startPressed = true;
-    }
-
     update() {
-        if (this._startPressed) {
+        this._count++;
+
+        if (this._count > 200) {
             this.setVisible(false);   // このシーンの全スプライトを非表示にする
             return C.TITLE; // 次のシーン
         } else {

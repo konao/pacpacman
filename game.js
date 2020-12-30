@@ -69,10 +69,14 @@ class Game {
             let nextMode = this._currScene.update();
 
             if (nextMode) {
+                console.log(`nextMode=${nextMode}`);
                 // シーン変更なら新しいシーンオブジェクトに切り替える
                 switch (nextMode) {
                     case C.TITLE:
                         // タイトル画面
+                        this._titleScene.initSprites(PIXI, container);
+                        this._titleScene.setVisible(true);
+                        this._currScene = this._titleScene;
                         break;
 
                     case C.DEMO:
@@ -98,9 +102,12 @@ class Game {
                         
                     case C.GAMEOVER:
                         // ゲームオーバー
-                        break;
-                            
+                        container.removeChildren();
 
+                        this._gameOverScene.initSprites(PIXI, container);
+                        this._currScene = this._gameOverScene;
+
+                        break;
                 }
             }
         }
