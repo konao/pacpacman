@@ -28,6 +28,12 @@ class GameScene {
 
         // 敵
         this._enemies = [];
+
+        // パックマンの残り数
+        this._pacRest = 3;
+
+        // 状態
+        this._state = C.PLAY_NORMAL;
     }
 
     initStage() {
@@ -117,28 +123,77 @@ class GameScene {
     }
 
     update() {
-        // パックマン移動
-        if (this._pacman) {
-            this._pacman.move();
-
-            let eatCount = this._pacman.detectCollision(this._stage);
-            this._score.incrValue(eatCount * 10);
-        }
-
-        // 敵移動
-        if (this._enemies && this._enemies.length > 0) {
-            for (let i=0; i<this._enemies.length; i++) {
-                let enemy = this._enemies[i];
-                enemy.move(this._pacman.getPos());
-                enemy.updateSprite();
-
-                // 衝突判定
-                if (enemy.detectCollision(this._pacman.getPos())) {
-                    // 捕まった
-                    console.log('Captured!!');
+        switch(this._state) {
+            case C.PLAY_NORMAL:
+                {
+                    // パックマン移動
+                    if (this._pacman) {
+                        this._pacman.move();
+            
+                        let eatCount = this._pacman.detectCollision(this._stage);
+                        this._score.incrValue(eatCount * 10);
+                    }
+            
+                    // 敵移動
+                    if (this._enemies && this._enemies.length > 0) {
+                        for (let i=0; i<this._enemies.length; i++) {
+                            let enemy = this._enemies[i];
+                            enemy.move(this._pacman.getPos());
+                            enemy.updateSprite();
+            
+                            // 衝突判定
+                            if (enemy.detectCollision(this._pacman.getPos())) {
+                                // 捕まった
+                                console.log('Captured!!');
+                                this._state = C.PLAY_DYING;
+                                this._pacman.startDyingAnim();
+                            }
+                        }
+                    }
                 }
-            }
+                break;
+            
+            case C.PLAY_POWERUP:
+                {
+                    // パワーアップ中
+                }
+                break;
+            
+            case C.PLAY_DYING:
+                {
+                    // 捕まった
+
+                    // パックマンがしおれるアニメーション
+                    if (!this._pacman.doDyingAnim())
+                    {
+                        // アニメーション終了
+                        this._pacRest--;
+
+                        if (this._pacRest === 0) {
+                            // 残りが0ならゲームオーバー
+                            return C.GAMEOVER;
+                        } else {
+                            // まだいるならリスタート
+                            this._state = C.PLAY_RESTART;
+                            this._pacman.stopDyingAnim();
+                        }
+                    }
+
+
+                }
+                break;
+
+            case C.PLAY_RESTART:
+                {
+                    // 捕まった
+
+                    // パックマンがしおれるアニメーション
+
+                }
+                break;
         }
+
+        return null;
     }
 }
 

@@ -40,6 +40,12 @@ class Pacman extends Entity {
 
         // 現在のスプライトインデックス
         this._curIdx = -1;
+
+        // 死亡アニメーションカウント
+        this._dyingAnimCount = 0;
+
+        // 死亡アニメーション用タイマー
+        this._dyingAnimTimer = 0;
     }
 
     getDirec() {
@@ -85,6 +91,14 @@ class Pacman extends Entity {
         }
     }
 
+    // パックマンがしおれるアニメーション用のインデックス取得
+    //
+    // @param animCount [i] アニメーションカウント(0<=animCount<=9)
+    getSprIdxForDyingAnim(animCount) {
+        const base = 13;
+        return base + animCount;
+    }
+
     initSprite(PIXI, container) {
         this._pac = [];
 
@@ -94,6 +108,7 @@ class Pacman extends Entity {
             'pac20', 'pac21', 'pac22',
             'pac30', 'pac31', 'pac32',
             'pac40', 'pac41', 'pac42',
+            "pac_d00", "pac_d01", "pac_d02", "pac_d03", "pac_d04", "pac_d05", "pac_d06", "pac_d07", "pac_d08", "pac_d09"
         ]
         
         for (let imgName of pacImageNames) {
@@ -284,6 +299,66 @@ class Pacman extends Entity {
             }
         
         return eatCount;
+    }
+
+    // 死亡アニメーション開始
+    startDyingAnim() {
+        // 現在のスプライトを非表示にする
+        if (this._curIdx >= 0) {
+            this._pac[this._curIdx].visible = false;
+        }
+
+        // 死亡アニメーションカウンタをリセット
+        this._dyingAnimCount = 0;
+        this._dyingAnimTimer = 0;
+
+        // 新しいパックマンスプライトを表示onにする
+        let newIdx = this.getSprIdxForDyingAnim(this._dyingAnimCount);
+        // console.log(`curIdx=${curIdx}, newIdx=${newIdx}`);
+        let pSprite = this._pac[newIdx];
+        pSprite.visible = true;
+
+        let px = Math.floor(this._x * C.IMGW);
+        let py = Math.floor(this._y * C.IMGW);
+
+        pSprite.x = px;
+        pSprite.y = py;
+    }
+
+    // 死亡アニメーション終了
+    stopDyingAnim() {
+        // 現在のスプライトを非表示にする
+        if (this._curIdx >= 0) {
+            this._pac[this._curIdx].visible = false;
+        }
+
+        // 死亡アニメーションカウンタをリセット
+        this._dyingAnimCount = 0;
+    }
+
+    doDyingAnim() {
+        this._dyingAnimTimer++;
+        if (this._dyingAnimTimer >= 10) {
+            // カウンタ更新
+            this._dyingAnimTimer = 0;
+            this._dyingAnimCount++;
+
+            // 新しいパックマンスプライトを表示onにする
+            let newIdx = this.getSprIdxForDyingAnim(this._dyingAnimCount);
+            // console.log(`curIdx=${curIdx}, newIdx=${newIdx}`);
+            let pSprite = this._pac[newIdx];
+            pSprite.visible = true;
+
+            let px = Math.floor(this._x * C.IMGW);
+            let py = Math.floor(this._y * C.IMGW);
+
+            pSprite.x = px;
+            pSprite.y = py;
+
+            return (this._dyingAnimCount <= 9) ? true : false;  // 返り値がfalseならアニメーション終了
+        }
+
+        return true;
     }
 }
 

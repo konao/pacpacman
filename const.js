@@ -13,11 +13,13 @@ const LEFT = 4;
 
 const TITLE = 0;
 const DEMO = 10;
-const START = 20;
-const PLAY_NORMAL = 21;
-const PLAY_POWERUP = 22;
-const DEAD = 23;
-const GAMEOVER = 24;
+const PLAY = 20;
+const GAMEOVER = 30;
+
+const PLAY_NORMAL = 0;
+const PLAY_POWERUP = 1;
+const PLAY_DYING = 2;
+const PLAY_RESTART = 3;
 
 const AKEBEE = 0;
 const PINKY = 1;
@@ -35,11 +37,12 @@ module.exports = {
 
     TITLE,
     DEMO,
-    START,
+    PLAY,
+    GAMEOVER,
+
     PLAY_NORMAL,
     PLAY_POWERUP,
-    DEAD,
-    GAMEOVER,
+    PLAY_RESTART,
 
     AKEBEE,
     PINKY,

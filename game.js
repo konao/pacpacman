@@ -5,6 +5,7 @@
 const C = require('./const');
 const { TitleScene } = require("./titleScene");
 const { GameScene } = require("./gameScene");
+const { GameOverScene } = require("./gameOverScene");
 
 class Game {
     constructor() {
@@ -20,6 +21,7 @@ class Game {
         // 各シーンオブジェクト（先に作っておく）
         this._titleScene = new TitleScene();
         this._gameScene = new GameScene();
+        this._gameOverScene = new GameOverScene();
     }
 
     initGame() {
@@ -69,13 +71,36 @@ class Game {
             if (nextMode) {
                 // シーン変更なら新しいシーンオブジェクトに切り替える
                 switch (nextMode) {
-                    case C.START:
+                    case C.TITLE:
+                        // タイトル画面
+                        break;
+
+                    case C.DEMO:
+                        // デモプレイ画面
+                        break;
+    
+                    case C.PLAY:
+                        // プレイ中
                         this._gameScene.initStage();
                         this._gameScene.initSprites(PIXI, container);
                         this._gameScene.setVisible(true);
 
                         this._currScene = this._gameScene;
                         break;
+                    
+                    case C.RESTART:
+                        // 再スタート画面
+                        this._gameScene.reinitStage();
+                        this._gameScene.setVisible(true);
+
+                        this._currScene = this._gameScene;
+                        break;
+                        
+                    case C.GAMEOVER:
+                        // ゲームオーバー
+                        break;
+                            
+
                 }
             }
         }
