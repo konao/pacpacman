@@ -245,10 +245,10 @@ class Stage {
 
         // debug
         let nwps = this._wps.length;
-        console.log(`total waypoints=${nwps}`);
+        // console.log(`total waypoints=${nwps}`);
         for (let i=0; i<nwps; i++) {
             let wp = this._wps[i];
-            console.log(`[${i}], (${wp.x}, ${wp.y})`);
+            // console.log(`[${i}], (${wp.x}, ${wp.y})`);
         }
     }
 

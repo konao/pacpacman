@@ -56,7 +56,7 @@ class GameScene {
         const nEnemies = 5; // ****** モンスターの数 ******
         let wps = this._stage.getRandomWayPoints(nEnemies);
         for (let i=0; i<nEnemies; i++) {
-            let kind = Utils.randInt(4);
+            let kind = Utils.randInt(4)+1;
             let enemy = new Enemy(kind);
             enemy.setPos(wps[i]);
             // console.log(`[${i}] pos=(${wps[i].x}, ${wps[i].y})`);
@@ -163,6 +163,7 @@ class GameScene {
 
                                 this._state = C.PLAY_DYING;
                                 this._pacman.startDyingAnim();
+                                break;
                             }
                         }
                     }
