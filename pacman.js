@@ -147,10 +147,6 @@ class Pacman extends Entity {
         if (this._pac.length > 0) {
             let curIdx = this.getSprIdx();
             let pSprite = this._pac[curIdx];
-            if (!pSprite) {
-                console.log('** ERROR **');
-                console.log(`curIdx=${curIdx}`);
-            }
 
             let px = Math.floor(this._x * C.IMGW);
             let py = Math.floor(this._y * C.IMGW);
