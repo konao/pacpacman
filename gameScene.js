@@ -15,13 +15,19 @@ const { Score } = require('./score');
 // ---------------------------------
 class GameScene {
     constructor() {
-        this._container = null;
+        this._PIXI = null;  // PIXIオブジェクト
+        this._parentContainer = null;   // 親コンテナ
+        this._container = null; // このシーンのスプライトを格納するコンテナ
 
         // スコア、残りパックマン数表示用スプライト
         this._score = null;
         this._hiScore = null;
         this._restPacman = null;
         this._restDot = null;   // for debug
+
+        // スコア、ハイスコア（の値）
+        this._scoreValue = 0;
+        this._hiscoreValue = 0;
 
         // ステージ
         this._stage = null;
@@ -36,20 +42,32 @@ class GameScene {
         this._state = null;
 
         // パックマンの残り数
-        this._pacRest = null;
-
-        // ドット残り数
-        this._dotRest = null;
-    }
-
-    initStage() {
-        // パックマンの残り数
         this._pacRest = 2;
 
+        // ドット残り数
+        this._dotRest = 0;
+
+        // シーンクリア時アニメーション用
+        this._sceneClearedAnimCount = 0;
+        this._sceneClearedAnimTimer = 0;
+    }
+
+    initStage(PIXI, container) {
+        this._PIXI = PIXI;
+        this._parentContainer = container;
+        
         // 状態
         this._state = C.PLAY_STANDBY;
 
         this._stage = new Stage();
+
+        this._score = new Score('Score');
+        this._hiScore = new Score('Hi-Score');
+        this._restPacman = new Score('Pacman Left');
+        this._restDot = new Score('Dots left');
+    }
+
+    setupNewStage() {
         this._stage.generate(4, 8, 6);
         // this._stage.print();
         this._dotRest = this._stage.countDots();
@@ -76,15 +94,10 @@ class GameScene {
         this._pacman.setPos(p);
         this._pacman.setStage(this._stage);
 
-        this._score = new Score('Score');
-        this._hiScore = new Score('Hi-Score');
-        this._restPacman = new Score('Pacman Left');
-        this._restDot = new Score('Dots left');
-
         this._pacman.startStandbyAnim();
     }
 
-    reinitStage() {
+    restartStage() {
         // パックマンを出現させる新しい位置を計算
         let p = this.findNewPosForPacman();
         this._pacman.setPos(p);
@@ -113,8 +126,14 @@ class GameScene {
     }
 
     // @param PIXI [i] PIXIオブジェクト
-    // @param container [i] PIXI.containerオブジェクト
-    initSprites(PIXI, container) {
+    initSprites() {
+        let PIXI = this._PIXI;
+
+        if (this._container) {
+            // 前のスプライトが残っていれば消す
+            this._container.removeChildren();
+        }
+
         this._container = new PIXI.Container();
 
         // stageに対応するスプライト生成
@@ -131,12 +150,12 @@ class GameScene {
         this._score.initSprite(PIXI, this._container);
         this._score.setPos(1150, 20);
         this._score.setFontSize(30);
-        this._score.setValue(0);
+        this._score.setValue(this._scoreValue);
 
         this._hiScore.initSprite(PIXI, this._container);
         this._hiScore.setPos(1150, 100);
         this._hiScore.setFontSize(30);
-        this._hiScore.setValue(0);
+        this._hiScore.setValue(this._hiscoreValue);
 
         this._restPacman.initSprite(PIXI, this._container);
         this._restPacman.setPos(1150, 300);
@@ -148,7 +167,7 @@ class GameScene {
         this._restDot.setFontSize(30);
         this._restDot.setValue(this._dotRest);
 
-        container.addChild(this._container);
+        this._parentContainer.addChild(this._container);
         this.setVisible(false);
     }
 
@@ -180,7 +199,6 @@ class GameScene {
         switch(this._state) {
             case C.PLAY_STANDBY:
                 {
-                    // パックマンがしおれるアニメーション
                     if (!this._pacman.doStandbyAnim())
                     {
                         this._pacman.stopStandbyAnim();
@@ -196,9 +214,23 @@ class GameScene {
                         this._pacman.move();
             
                         let eatCount = this._pacman.detectCollision(this._stage);
-                        this._score.incrValue(eatCount * 10);
+                        this._scoreValue += eatCount * 10;
+                        this._score.setValue(this._scoreValue);
+                        if (this._scoreValue > this._hiscoreValue) {
+                            // ハイスコア更新
+                            this._hiscoreValue = this._scoreValue;
+                            this._hiScore.setValue(this._hiscoreValue);
+                        }
                         this._dotRest -= eatCount;
                         this._restDot.setValue(this._dotRest);
+
+                        if (this._dotRest <= 0) {
+                            // 面クリア
+                            this._state = C.PLAY_SCENE_CLEARED;
+                            this._sceneClearedAnimTimer = 0;
+                            this._sceneClearedAnimCount = 0;
+                            break;
+                        }
                     }
             
                     // 敵移動
@@ -229,6 +261,33 @@ class GameScene {
                 }
                 break;
             
+            case C.PLAY_SCENE_CLEARED:
+                {
+                    // 面クリア
+                    this._sceneClearedAnimTimer++;
+                    if (this._sceneClearedAnimTimer >= 10) {
+                        this._sceneClearedAnimTimer = 0;
+            
+                        // カウンタ更新
+                        this._sceneClearedAnimCount++;
+                        if (this._sceneClearedAnimCount >= 10) {
+                            // アニメーション終了
+                            this._sceneClearedAnimCount = 0;
+                            
+                            // 次の面を開始する
+                            this.setupNewStage();
+                            this.initSprites();
+                            this.setVisible(true);
+    
+                            this._state = C.PLAY_STANDBY;
+                        } else {
+                            // モンスターを点滅させる
+                            this._enemies.forEach((e) => { e.setVisible((this._sceneClearedAnimCount % 2) === 0); });
+                        }
+                    }
+                }
+                break;
+            
             case C.PLAY_DYING:
                 {
                     // 捕まった
@@ -239,12 +298,12 @@ class GameScene {
                         // アニメーション終了
                         if (this._pacRest === 0) {
                             // 残りが0ならゲームオーバー
-                            return C.GAMEOVER;
+                            return C.SCENE_GAMEOVER;
                         } else {
                             // まだいるならリスタート
                             this._pacman.stopDyingAnim();
                             this._state = C.PLAY_STANDBY;
-                            return C.RESTART;
+                            return C.SCENE_RESTART;
                         }
                     }
                 }

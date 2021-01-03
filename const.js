@@ -11,17 +11,18 @@ const RIGHT = 2;
 const DOWN = 3;
 const LEFT = 4;
 
-const TITLE = 1;
-const DEMO = 2;
-const PLAY = 3;
-const RESTART = 4;
-const GAMEOVER = 10;
+const SCENE_TITLE = 1;
+const SCENE_DEMO = 2;
+const SCENE_PLAY = 3;
+const SCENE_RESTART = 4;
+const SCENE_GAMEOVER = 10;
 
 const PLAY_STANDBY = 1;
 const PLAY_NORMAL = 10;
 const PLAY_POWERUP = 20;
-const PLAY_DYING = 30;
-const PLAY_RESTART = 40;
+const PLAY_SCENE_CLEARED = 30;
+const PLAY_DYING = 40;
+const PLAY_RESTART = 50;
 
 const AKEBEE = 1;
 const PINKY = 2;
@@ -31,21 +32,23 @@ const IJIKE = 5;
 
 module.exports = {
     IMGW,
+
     NODIR,
     UP,
     RIGHT,
     DOWN,
     LEFT,
 
-    TITLE,
-    DEMO,
-    PLAY,
-    RESTART,
-    GAMEOVER,
+    SCENE_TITLE,
+    SCENE_DEMO,
+    SCENE_PLAY,
+    SCENE_RESTART,
+    SCENE_GAMEOVER,
 
     PLAY_STANDBY,
     PLAY_NORMAL,
     PLAY_POWERUP,
+    PLAY_SCENE_CLEARED,
     PLAY_DYING,
     PLAY_RESTART,
 

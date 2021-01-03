@@ -87,6 +87,16 @@ class Enemy extends Entity {
         }
     }
 
+    setVisible(bVisible) {
+        let curIdx = this.getSprIdxFromDir(this._direc);
+        if (curIdx >= 0) {
+            let pSprite = this._sprs[curIdx];
+            if (pSprite) {
+                pSprite.visible = bVisible;
+            }
+        }
+    }
+
     // 進行方向からスプライトインデックスを求める
     getSprIdxFromDir(direc) {
         switch (direc) {

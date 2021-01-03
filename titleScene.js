@@ -64,7 +64,7 @@ class TitleScene extends BaseScene {
         if (this._startPressed) {
             this.setVisible(false);   // このシーンの全スプライトを非表示にする
             this._startPressed = false;
-            return C.PLAY;
+            return C.SCENE_PLAY;
         } else {
             return null;
         }

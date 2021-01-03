@@ -9,9 +9,6 @@ const { GameOverScene } = require("./gameOverScene");
 
 class Game {
     constructor() {
-        // 状態
-        this._state = C.TITLE;
-
         // スコア
         this._score = null;
 
@@ -66,41 +63,42 @@ class Game {
     gameLoop(PIXI, container) {
         if (this._currScene) {
             // 現在のシーンオブジェクトに処理を実行させる
-            let nextMode = this._currScene.update();
+            let nextScene = this._currScene.update();
 
-            if (nextMode) {
+            if (nextScene) {
                 // console.log(`nextMode=${nextMode}`);
                 // シーン変更なら新しいシーンオブジェクトに切り替える
-                switch (nextMode) {
-                    case C.TITLE:
+                switch (nextScene) {
+                    case C.SCENE_TITLE:
                         // タイトル画面
                         this._titleScene.initSprites(PIXI, container);
                         this._titleScene.setVisible(true);
                         this._currScene = this._titleScene;
                         break;
 
-                    case C.DEMO:
+                    case C.SCENE_DEMO:
                         // デモプレイ画面
                         break;
     
-                    case C.PLAY:
+                    case C.SCENE_PLAY:
                         // プレイ中
-                        this._gameScene.initStage();
-                        this._gameScene.initSprites(PIXI, container);
+                        this._gameScene.initStage(PIXI, container);
+                        this._gameScene.setupNewStage();
+                        this._gameScene.initSprites();
                         this._gameScene.setVisible(true);
 
                         this._currScene = this._gameScene;
                         break;
                     
-                    case C.RESTART:
+                    case C.SCENE_RESTART:
                         // 再スタート画面
-                        this._gameScene.reinitStage();
+                        this._gameScene.restartStage();
                         // this._gameScene.setVisible(true);
 
                         this._currScene = this._gameScene;
                         break;
                         
-                    case C.GAMEOVER:
+                    case C.SCENE_GAMEOVER:
                         // ゲームオーバー
                         container.removeChildren();
 

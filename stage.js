@@ -133,12 +133,28 @@ class Stage {
         }
 
         // 空いている空白をドットに変える
-        for (let i=0; i<h; i++) {
-            for (let j=0; j<w; j++) {
-                if (this._stage[i][j] === SPACE) {
-                    this._stage[i][j] = DOT;
+        let forDebug = false;   // デバッグモードフラグ．trueのときドットの数を少なくして面クリアしやすくする
+        if (forDebug) {
+            let cc = 0;
+            for (let i=0; i<h; i++) {
+                for (let j=0; j<w; j++) {
+                    if (this._stage[i][j] === SPACE) {
+                        if (cc < 10) {  // ドット最大数（面クリアしやすくするため）
+                            this._stage[i][j] = DOT;
+                            cc++;    
+                        }
+                    }
                 }
-            }
+            }    
+        } else {
+            // 通常モード
+            for (let i=0; i<h; i++) {
+                for (let j=0; j<w; j++) {
+                    if (this._stage[i][j] === SPACE) {
+                        this._stage[i][j] = DOT;
+                    }
+                }
+            }    
         }
     }
 

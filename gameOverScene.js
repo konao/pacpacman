@@ -45,7 +45,7 @@ class GameOverScene extends BaseScene {
 
         if (this._count > 200) {
             this.setVisible(false);   // このシーンの全スプライトを非表示にする
-            return C.TITLE; // 次のシーン
+            return C.SCENE_TITLE; // 次のシーン
         } else {
             return null;
         }
