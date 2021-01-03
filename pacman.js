@@ -41,13 +41,16 @@ class Pacman extends Entity {
         // 現在のスプライトインデックス
         this._curIdx = -1;
 
+        // 前回showSpriteの対象となったスプライト
+        this._lastIdx = 0;
+
         // 現在のモード（通常、パワーアップ中、死亡中, 他）
         this._mode = C.PLAY_NORMAL;
 
         // 開始時アニメーションカウント
         this._standbyAnimCount = 0;
 
-        // 死亡アニメーション用タイマー
+        // 開始時アニメーション用タイマー
         this._standbyAnimTimer = 0;
 
         // 死亡アニメーションカウント
@@ -55,9 +58,6 @@ class Pacman extends Entity {
 
         // 死亡アニメーション用タイマー
         this._dyingAnimTimer = 0;
-
-        // 前回showSpriteの対象となったスプライト
-        this._lastIdx = 0;
     }
 
     getDirec() {
