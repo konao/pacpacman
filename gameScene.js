@@ -296,7 +296,7 @@ class GameScene {
                     if (!this._pacman.doDyingAnim())
                     {
                         // アニメーション終了
-                        if (this._pacRest === 0) {
+                        if (this._pacRest <= 0) {
                             // 残りが0ならゲームオーバー
                             return C.SCENE_GAMEOVER;
                         } else {
