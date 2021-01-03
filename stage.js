@@ -210,31 +210,6 @@ class Stage {
     searchAllWayPoints() {
         this._wps = [];
 
-        // let isWayPoint = ((x, y) => {
-        //     if (this.get(x, y)===WALL) return false;    // (x, y)が壁ならそもそも論外
-
-        //     // 上下左右の状態を得る
-        //     let upStat = this.get(x, y-1);
-        //     let downStat = this.get(x, y+1);
-        //     let leftStat = this.get(x-1, y);
-        //     let rightStat = this.get(x+1, y);
-
-        //     if ((upStat!==WALL) && (downStat!==WALL) &&
-        //         (leftStat===WALL) && (rightStat===WALL)) {
-        //             // 上下は壁でなく、左右は壁
-        //             // ---> (x, y)は道の途中
-        //             return false;
-        //     }
-        //     else if ((upStat===WALL) && (downStat===WALL) &&
-        //         (leftStat!==WALL) && (rightStat!==WALL)) {
-        //             // 上下は壁、左右は壁でない
-        //             // ---> (x, y)は道の途中
-        //             return false;
-        //     }
-            
-        //     return true;    // (x, y)はウェイポイント
-        // }).bind(this);
-
         for (let y=1; y<this._h-1; y++) {
             for (let x=1; x<this._w-1; x++) {
                 if (this.isWayPoint(x, y)) {
@@ -254,7 +229,8 @@ class Stage {
 
     // (x, y)がウェイポイントかどうか判定する
     //
-    // (x, y)は道の途中でない時、そこはウェイポイント．
+    // (x, y)がウェイポイント ≡ (x, y)が道の途中でない時のこと．
+    //
     // 道の途中とは、(x, y)から伸びている道が上下または左右の両方向しかないときである．
     isWayPoint(x, y) {
         if (this.get(x, y)===WALL) return false;    // (x, y)が壁ならそもそも論外
@@ -284,26 +260,31 @@ class Stage {
     // (cx, cy)に最も近いウェイポイントを返す
     //
     // return (nx, ny) ... (cx, cy)に最も近いウェイポイント
-    getNearestWayPoint(cx, cy) {
-        let minDist2 = -1;
-        let nearestPt = {x: 0, y: 0};
-        let nwps = this._wps.length;
-        for (let i=0; i<nwps; i++) {
-            let wp = this._wps[i];
-            let dist2 = (cx-wp.x)*(cx-wp.x) + (cy-wp.y)*(cy-wp.y)
-            if (minDist2 < 0) {
-                minDist2 = dist2;
-                nearestPt = wp;
-                console.log(`(${nearestPt.x}, ${nearestPt.y}) : dist2=${dist2}`);
-            }
-            else if (dist2 < minDist2) {
-                minDist2 = dist2;
-                nearestPt = wp;
-                console.log(`(${nearestPt.x}, ${nearestPt.y}) : dist2=${dist2}`);
-            }
-        }
-        return nearestPt;
-    }
+    // getNearestWayPoint(cx, cy) {
+    //     let minDist2 = -1;
+    //     let nearestPt = {x: 0, y: 0};
+    //     let nwps = this._wps.length;
+    //     for (let i=0; i<nwps; i++) {
+    //         let wp = this._wps[i];
+
+    //         // 距離の2乗
+    //         let dist2 = (cx-wp.x)*(cx-wp.x) + (cy-wp.y)*(cy-wp.y);
+
+    //         if (minDist2 < 0) {
+    //             // 最初
+    //             minDist2 = dist2;
+    //             nearestPt = wp;
+    //             console.log(`(${nearestPt.x}, ${nearestPt.y}) : dist2=${dist2}`);
+    //         }
+    //         else if (dist2 < minDist2) {
+    //             // より近い点を発見
+    //             minDist2 = dist2;
+    //             nearestPt = wp;
+    //             console.log(`(${nearestPt.x}, ${nearestPt.y}) : dist2=${dist2}`);
+    //         }
+    //     }
+    //     return nearestPt;
+    // }
 
     getRandomWayPoints(n) {
         let randWps = [];

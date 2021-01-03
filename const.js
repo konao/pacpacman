@@ -17,10 +17,11 @@ const PLAY = 3;
 const RESTART = 4;
 const GAMEOVER = 10;
 
-const PLAY_NORMAL = 1;
-const PLAY_POWERUP = 2;
-const PLAY_DYING = 3;
-const PLAY_RESTART = 4;
+const PLAY_STANDBY = 1;
+const PLAY_NORMAL = 10;
+const PLAY_POWERUP = 20;
+const PLAY_DYING = 30;
+const PLAY_RESTART = 40;
 
 const AKEBEE = 1;
 const PINKY = 2;
@@ -42,6 +43,7 @@ module.exports = {
     RESTART,
     GAMEOVER,
 
+    PLAY_STANDBY,
     PLAY_NORMAL,
     PLAY_POWERUP,
     PLAY_DYING,

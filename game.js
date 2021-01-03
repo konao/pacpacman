@@ -69,7 +69,7 @@ class Game {
             let nextMode = this._currScene.update();
 
             if (nextMode) {
-                console.log(`nextMode=${nextMode}`);
+                // console.log(`nextMode=${nextMode}`);
                 // シーン変更なら新しいシーンオブジェクトに切り替える
                 switch (nextMode) {
                     case C.TITLE:

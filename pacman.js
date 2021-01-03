@@ -41,8 +41,14 @@ class Pacman extends Entity {
         // 現在のスプライトインデックス
         this._curIdx = -1;
 
-        // 現在のモード（通常、死亡中）
+        // 現在のモード（通常、パワーアップ中、死亡中, 他）
         this._mode = C.PLAY_NORMAL;
+
+        // 開始時アニメーションカウント
+        this._standbyAnimCount = 0;
+
+        // 死亡アニメーション用タイマー
+        this._standbyAnimTimer = 0;
 
         // 死亡アニメーションカウント
         this._dyingAnimCount = 0;
@@ -141,6 +147,10 @@ class Pacman extends Entity {
         if (this._pac.length > 0) {
             let curIdx = this.getSprIdx();
             let pSprite = this._pac[curIdx];
+            if (!pSprite) {
+                console.log('** ERROR **');
+                console.log(`curIdx=${curIdx}`);
+            }
 
             let px = Math.floor(this._x * C.IMGW);
             let py = Math.floor(this._y * C.IMGW);
@@ -334,6 +344,47 @@ class Pacman extends Entity {
         
         return eatCount;
     }
+
+    // 開始時アニメーション開始
+    startStandbyAnim() {
+        // モードを元に戻す
+        this._mode = C.PLAY_STANDBY;
+
+        this.updateSprite();
+
+        this._standbyAnimCount = 0;
+        this._standbyAnimTimer = 0;
+    }
+
+    // 開始時アニメーション終了
+    stopStandbyAnim() {
+        // 現在のスプライトを表示する
+        this.showSprite(true);
+
+        // モードを元に戻す
+        this._mode = C.PLAY_NORMAL;
+    }
+
+    doStandbyAnim() {
+        this._standbyAnimTimer++;
+        if (this._standbyAnimTimer >= 10) {
+            this._standbyAnimTimer = 0;
+
+            // カウンタ更新
+            this._standbyAnimCount++;
+            if (this._standbyAnimCount >= 10) {
+                this._standbyAnimCount = 0;
+                return false;   // 返り値がfalseならアニメーション終了
+            }
+
+            // 表示on/offを更新
+            this.updateSprite();
+            this.showSprite((this._standbyAnimCount % 2) === 0);
+        }
+
+        return true;
+    }
+
 
     // 死亡アニメーション開始
     startDyingAnim() {

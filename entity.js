@@ -28,10 +28,6 @@ class Entity {
 
     // @param x {number} [i] x座標値
     // @param y {number} [i] y座標値
-    // setPos(x, y) {
-    //     this._x = x;
-    //     this._y = y;
-    // }
     setPos({x, y}) {
         this._x = x;
         this._y = y;

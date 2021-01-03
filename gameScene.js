@@ -30,6 +30,9 @@ class GameScene {
 
         // 敵
         this._enemies = [];
+
+        // 状態
+        this._state = null;
     }
 
     initStage() {
@@ -37,17 +40,12 @@ class GameScene {
         this._pacRest = 2;
 
         // 状態
-        this._state = C.PLAY_NORMAL;
+        this._state = C.PLAY_STANDBY;
 
         this._stage = new Stage();
         this._stage.generate(4, 8, 6);
         // this._stage.print();
         
-        this._pacman = new Pacman();
-        this._pacman.setPos({x: 1.0, y: 1.0});
-        this._pacman.setStage(this._stage);
-
-        // debug
         this._stage.searchAllWayPoints();
 
         // ランダムにn個のウェイポイントを選び出す
@@ -56,7 +54,7 @@ class GameScene {
         const nEnemies = 5; // ****** モンスターの数 ******
         let wps = this._stage.getRandomWayPoints(nEnemies);
         for (let i=0; i<nEnemies; i++) {
-            let kind = Utils.randInt(4)+1;
+            let kind = Utils.randInt(4)+1;  // モンスターの種類
             let enemy = new Enemy(kind);
             enemy.setPos(wps[i]);
             // console.log(`[${i}] pos=(${wps[i].x}, ${wps[i].y})`);
@@ -65,16 +63,44 @@ class GameScene {
             this._enemies.push(enemy);
         }
 
+        this._pacman = new Pacman();
+        let p = this.findNewPosForPacman();
+        this._pacman.setPos(p);
+        this._pacman.setStage(this._stage);
+
         this._score = new Score('Score');
         this._hiScore = new Score('Hi-Score');
         this._restPacman = new Score('Pacman Left');
+
+        this._pacman.startStandbyAnim();
     }
 
     reinitStage() {
         // パックマンを出現させる新しい位置を計算
-        let wps = this._stage.getRandomWayPoints(1);
-        this._pacman.setPos(wps[0]);
+        let p = this.findNewPosForPacman();
+        this._pacman.setPos(p);
         this._pacman.updateSprite();
+
+        this._pacman.startStandbyAnim();
+    }
+
+    // パックマンを出現させる位置を計算
+    // モンスターからある程度離れた場所を探す
+    //
+    // @return {x, y} ... パックマンを出現させる位置
+    findNewPosForPacman() {
+        // モンスターの位置のリストを作成
+        let enemyPosList = this._enemies.map((e) => { return e.getPos(); });
+
+        let p = this._stage.getRandomWayPoints(1)[0];   // ランダムに位置を生成
+        let nearest = Utils.getNearestPos(p, enemyPosList); // pとモンスターの最小距離を計算
+        while (nearest.minDist < 8) {
+            // 近くにモンスターがいる．新しい場所を探す
+            p = this._stage.getRandomWayPoints(1)[0];
+            nearest = Utils.getNearestPos(p, enemyPosList);
+        }
+
+        return p;
     }
 
     // @param PIXI [i] PIXIオブジェクト
@@ -138,6 +164,17 @@ class GameScene {
 
     update() {
         switch(this._state) {
+            case C.PLAY_STANDBY:
+                {
+                    // パックマンがしおれるアニメーション
+                    if (!this._pacman.doStandbyAnim())
+                    {
+                        this._pacman.stopStandbyAnim();
+                        this._state = C.PLAY_NORMAL;
+                    }
+                }
+                break;
+
             case C.PLAY_NORMAL:
                 {
                     // パックマン移動
@@ -190,7 +227,7 @@ class GameScene {
                         } else {
                             // まだいるならリスタート
                             this._pacman.stopDyingAnim();
-                            this._state = C.PLAY_NORMAL;
+                            this._state = C.PLAY_STANDBY;
                             return C.RESTART;
                         }
                     }
