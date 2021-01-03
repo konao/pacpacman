@@ -132,7 +132,7 @@ class Stage {
             this._stage[h-1][j] = WALL;
         }
 
-        // 空いていく空白をドットに変える
+        // 空いている空白をドットに変える
         for (let i=0; i<h; i++) {
             for (let j=0; j<w; j++) {
                 if (this._stage[i][j] === SPACE) {
@@ -140,6 +140,23 @@ class Stage {
                 }
             }
         }
+    }
+
+    // ドットの数を数える
+    //
+    // @return ステージにあるドットの数
+    countDots() {
+        let nDots = 0;
+
+        for (let i=0; i<this._h; i++) {
+            for (let j=0; j<this._w; j++) {
+                if (this._stage[i][j] === DOT) {
+                    nDots++;
+                }
+            }
+        }
+
+        return nDots;
     }
 
     print() {

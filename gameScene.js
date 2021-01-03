@@ -21,6 +21,7 @@ class GameScene {
         this._score = null;
         this._hiScore = null;
         this._restPacman = null;
+        this._restDot = null;   // for debug
 
         // ステージ
         this._stage = null;
@@ -33,6 +34,12 @@ class GameScene {
 
         // 状態
         this._state = null;
+
+        // パックマンの残り数
+        this._pacRest = null;
+
+        // ドット残り数
+        this._dotRest = null;
     }
 
     initStage() {
@@ -45,6 +52,7 @@ class GameScene {
         this._stage = new Stage();
         this._stage.generate(4, 8, 6);
         // this._stage.print();
+        this._dotRest = this._stage.countDots();
         
         this._stage.searchAllWayPoints();
 
@@ -71,6 +79,7 @@ class GameScene {
         this._score = new Score('Score');
         this._hiScore = new Score('Hi-Score');
         this._restPacman = new Score('Pacman Left');
+        this._restDot = new Score('Dots left');
 
         this._pacman.startStandbyAnim();
     }
@@ -134,6 +143,11 @@ class GameScene {
         this._restPacman.setFontSize(30);
         this._restPacman.setValue(this._pacRest);
 
+        this._restDot.initSprite(PIXI, this._container);
+        this._restDot.setPos(1150, 400);
+        this._restDot.setFontSize(30);
+        this._restDot.setValue(this._dotRest);
+
         container.addChild(this._container);
         this.setVisible(false);
     }
@@ -183,6 +197,8 @@ class GameScene {
             
                         let eatCount = this._pacman.detectCollision(this._stage);
                         this._score.incrValue(eatCount * 10);
+                        this._dotRest -= eatCount;
+                        this._restDot.setValue(this._dotRest);
                     }
             
                     // 敵移動
