@@ -30,6 +30,11 @@ const MIDSUKE = 3;
 const GUZUTA = 4;
 const IJIKE = 5;
 
+const APPLE = 1;
+const CHERRY = 2;
+const ORANGE = 3;
+const BANANA = 4;
+
 module.exports = {
     IMGW,
 
@@ -56,5 +61,10 @@ module.exports = {
     PINKY,
     MIDSUKE,
     GUZUTA,
-    IJIKE
+    IJIKE,
+
+    APPLE,
+    CHERRY,
+    ORANGE,
+    BANANA
 }
