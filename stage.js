@@ -9,6 +9,7 @@ const SPACE = 0;
 const WALL = 1;
 const DOT = 2;
 const POWER_FOOD = 3;
+const FRUIT = 4;
 
 class Stage {
     constructor() {
@@ -328,12 +329,30 @@ class Stage {
         }
         return randWps;
     }
+
+    // 空いているセルを探す（フルーツ配置のため）
+    //
+    // @return
+    // {x, y} ... 空白セルの位置
+    // null ... 空いているセルはなかった
+    getRandomSpacePoint() {
+        for (let i=0; i<10; i++) {
+            let x = Utils.randInt(this._w);
+            let y = Utils.randInt(this._h);
+            let e = this.get(x, y);
+            if (e === SPACE) {
+                return {x, y};
+            }
+        }
+        return null;
+    }
 }
 
 module.exports = {
     Stage,
     SPACE,
+    WALL,
     DOT,
     POWER_FOOD,
-    WALL
+    FRUIT
 }

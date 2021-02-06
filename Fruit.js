@@ -8,11 +8,11 @@ const ST = require('./stage');
 const U = require('./utils');
 
 class Fruit extends Entity {
-    constructor(kind) {
+    constructor() {
         super();
         
         // フルーツ種類
-        this._kind = kind;
+        this._kind = 0;
 
         // スプライトコンテナ
         this._sprs = [];
@@ -25,39 +25,32 @@ class Fruit extends Entity {
     initSprite(PIXI, container) {
         this._sprs = [];
 
-        let cname = '';
-        switch (this._kind) {
-            case C.APPLE:
-                {
-                    cname = 'r';    // red
-                    break;
-                }
-                
-            case C.CHERRY:
-                {
-                    cname = 'p';    // pink
-                    break;
-                }
-
-            case C.ORANGE:
-                {
-                    cname = 'g';    // green
-                    break;
-                }
-
-            case C.BANANA:
-                {
-                    cname = 'y';    // yellow
-                    break;
-                }
-        }
-
-        for (let i=0; i<4; i++) {
-            let sprName = cname + i.toString();
+        for (let i=0; i<8; i++) {
+            let sprName = 'fruit_' + i.toString();
+            console.log(sprName);
             let m = new PIXI.Sprite(PIXI.Texture.from(sprName));
             m.visible = false;
             container.addChild(m);
             this._sprs.push(m);
         }
+
+        this._kind = 0;
     }
+
+    setKind(kind) {
+        this._kind = kind;
+    }
+
+    setVisible(bVisible) {
+        if (this._kind >= 0) {
+            let pSprite = this._sprs[this._kind];
+            if (pSprite) {
+                pSprite.visible = bVisible;
+            }
+        }
+    }
+}
+
+module.exports = {
+    Fruit
 }

@@ -3,12 +3,13 @@
 // **********************************************
 
 const C = require('./const');
-const { Stage, SPACE, WALL, DOT, POWER_FOOD } = require('./stage');
+const { Stage, SPACE, WALL, DOT, POWER_FOOD, FRUIT } = require('./stage');
 const { Pacman } = require('./pacman');
 const Utils = require('./utils');
 const { Enemy } = require('./enemy');
 const { Text } = require('./text');
 const { Score } = require('./score');
+const { Fruit } = require('./fruit');
 
 // ---------------------------------
 // ゲーム本体制御
@@ -50,6 +51,9 @@ class GameScene {
         // シーンクリア時アニメーション用
         this._sceneClearedAnimCount = 0;
         this._sceneClearedAnimTimer = 0;
+
+        // フルーツ
+        this._fruit = null;
     }
 
     initStage(PIXI, container) {
@@ -65,6 +69,8 @@ class GameScene {
         this._hiScore = new Score('Hi-Score');
         this._restPacman = new Score('Pacman Left');
         this._restDot = new Score('Dots left');
+
+        this._fruit = new Fruit();
     }
 
     setupNewStage() {
@@ -167,6 +173,8 @@ class GameScene {
         this._restDot.setFontSize(30);
         this._restDot.setValue(this._dotRest);
 
+        this._fruit.initSprite(PIXI, this._container);
+
         this._parentContainer.addChild(this._container);
         this.setVisible(false);
     }
@@ -223,6 +231,17 @@ class GameScene {
                         }
                         this._dotRest -= eatCount;
                         this._restDot.setValue(this._dotRest);
+
+                        if ((this._dotRest % 10) === 0) {
+                            // 残りドットが10の倍数になったらフルーツを出現させる
+                            let fruitPos = this._stage.getRandomSpacePoint();
+                            console.log(`dotRest=${this._dotRest}`);
+                            if (fruitPos) {
+                                console.log(`fruitPos=(${fruitPos.x}, ${fruitPos.y})`);
+                                this._fruit.setCellPos(fruitPos);
+                                this._fruit.setVisible(true);
+                            }
+                        }
 
                         if (this._dotRest <= 0) {
                             // 面クリア

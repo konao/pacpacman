@@ -30,10 +30,14 @@ const MIDSUKE = 3;
 const GUZUTA = 4;
 const IJIKE = 5;
 
-const APPLE = 1;
-const CHERRY = 2;
+const CHERRY = 1;
+const STRAWBERRY = 2;
 const ORANGE = 3;
-const BANANA = 4;
+const APPLE = 4;
+const MELON = 5;
+const GALAXIAN = 6;
+const BELL = 7;
+const KEY = 8;
 
 module.exports = {
     IMGW,
@@ -63,8 +67,12 @@ module.exports = {
     GUZUTA,
     IJIKE,
 
-    APPLE,
     CHERRY,
+    STRAWBERRY,
     ORANGE,
-    BANANA
+    APPLE,
+    MELON,
+    GALAXIAN,
+    BELL,
+    KEY
 }

@@ -202,6 +202,71 @@
             "pivot": {"x":0,"y":0}
         },
 
+        "fruit_0": {
+            "frame": {"x":0,"y":312,"w":26,"h":26},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0,"y":0,"w":26,"h":26},
+            "sourceSize": {"w":26,"h":26},
+            "pivot": {"x":0,"y":0}
+        },
+        "fruit_1": {
+            "frame": {"x":26,"y":312,"w":26,"h":26},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0,"y":0,"w":26,"h":26},
+            "sourceSize": {"w":26,"h":26},
+            "pivot": {"x":0,"y":0}
+        },
+        "fruit_2": {
+            "frame": {"x":52,"y":312,"w":26,"h":26},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0,"y":0,"w":26,"h":26},
+            "sourceSize": {"w":26,"h":26},
+            "pivot": {"x":0,"y":0}
+        },
+        "fruit_3": {
+            "frame": {"x":78,"y":312,"w":26,"h":26},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0,"y":0,"w":26,"h":26},
+            "sourceSize": {"w":26,"h":26},
+            "pivot": {"x":0,"y":0}
+        },
+        "fruit_4": {
+            "frame": {"x":104,"y":312,"w":26,"h":26},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0,"y":0,"w":26,"h":26},
+            "sourceSize": {"w":26,"h":26},
+            "pivot": {"x":0,"y":0}
+        },
+        "fruit_5": {
+            "frame": {"x":130,"y":312,"w":26,"h":26},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0,"y":0,"w":26,"h":26},
+            "sourceSize": {"w":26,"h":26},
+            "pivot": {"x":0,"y":0}
+        },
+        "fruit_6": {
+            "frame": {"x":156,"y":312,"w":26,"h":26},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0,"y":0,"w":26,"h":26},
+            "sourceSize": {"w":26,"h":26},
+            "pivot": {"x":0,"y":0}
+        },
+        "fruit_7": {
+            "frame": {"x":182,"y":312,"w":26,"h":26},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0,"y":0,"w":26,"h":26},
+            "sourceSize": {"w":26,"h":26},
+            "pivot": {"x":0,"y":0}
+        },
+
         "g0": {
             "frame": {"x":0,"y":208,"w":26,"h":26},
             "rotated": false,
