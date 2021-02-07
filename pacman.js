@@ -332,6 +332,7 @@ class Pacman extends Entity {
                 if (value === ST.DOT) {
                     let dotSpr = stage.getSpr(cx, cy);
                     if (dotSpr && dotSpr.visible) {
+                        stage.set(cx, cy, ST.SPACE);
                         eatCount++;
                         dotSpr.visible = false;
                     }

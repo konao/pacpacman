@@ -44,6 +44,19 @@ class Stage {
         return this._stage[y][x];
     }
 
+    // @param x [i] 0<=x<this._w
+    // @param y [i] 0<=y<this._h
+    // @param value
+    //
+    // @return (x, y)にvalueをセットする
+    // 範囲オーバーの時はW何もしない
+    set(x, y, value) {
+        if ((x>=0) && (x<this._w) &&
+            (y>=0) && (y<this._h)) {
+                this._stage[y][x] = value;
+        }
+    }
+
     getSpr(x, y) {
         if ((x<0) || (x>=this._w) ||
             (y<0) || (y>=this._h)) {
@@ -253,12 +266,12 @@ class Stage {
         }
 
         // debug
-        let nwps = this._wps.length;
+        // let nwps = this._wps.length;
         // console.log(`total waypoints=${nwps}`);
-        for (let i=0; i<nwps; i++) {
-            let wp = this._wps[i];
-            // console.log(`[${i}], (${wp.x}, ${wp.y})`);
-        }
+        // for (let i=0; i<nwps; i++) {
+        //     let wp = this._wps[i];
+        //     // console.log(`[${i}], (${wp.x}, ${wp.y})`);
+        // }
     }
 
     // (x, y)がウェイポイントかどうか判定する
@@ -335,13 +348,18 @@ class Stage {
     // @return
     // {x, y} ... 空白セルの位置
     // null ... 空いているセルはなかった
-    getRandomSpacePoint() {
+    searchPlaceForFruit() {
         for (let i=0; i<10; i++) {
-            let x = Utils.randInt(this._w);
-            let y = Utils.randInt(this._h);
-            let e = this.get(x, y);
-            if (e === SPACE) {
-                return {x, y};
+            let p = this.getRandomWayPoints(1)[0];
+            if (p) {
+                let e = this.get(p.x, p.y);
+                // console.log(`p=(${p.x}, ${p.y}) = ${e}`);
+                if (e === SPACE) {
+                    return {
+                        x: p.x, 
+                        y: p.y
+                    };
+                }
             }
         }
         return null;

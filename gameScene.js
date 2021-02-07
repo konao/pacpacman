@@ -232,14 +232,20 @@ class GameScene {
                         this._dotRest -= eatCount;
                         this._restDot.setValue(this._dotRest);
 
+                        // フルーツ処理
+                        this._fruit.updateShowCount();
                         if ((this._dotRest % 10) === 0) {
                             // 残りドットが10の倍数になったらフルーツを出現させる
-                            let fruitPos = this._stage.getRandomSpacePoint();
-                            console.log(`dotRest=${this._dotRest}`);
-                            if (fruitPos) {
-                                console.log(`fruitPos=(${fruitPos.x}, ${fruitPos.y})`);
-                                this._fruit.setCellPos(fruitPos);
-                                this._fruit.setVisible(true);
+                            if (!this._fruit.getVisible()) {
+                                // 出現させるのはフルーツが表示されていない場合のみ
+                                let fruitPos = this._stage.searchPlaceForFruit();
+                                if (fruitPos) {
+                                    // console.log(`fruitPos=(${fruitPos.x}, ${fruitPos.y})`);
+                                    this._fruit.setCellPos(fruitPos);
+                                    this._fruit.updateSprite();
+                                    this._fruit.setVisible(true);
+                                    this._fruit.initShowCount();
+                                }
                             }
                         }
 
