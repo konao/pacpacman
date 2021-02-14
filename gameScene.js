@@ -9,7 +9,7 @@ const { Pacman } = require('./pacman');
 const Utils = require('./utils');
 const { Enemy } = require('./enemy');
 const { Text } = require('./text');
-const { Score } = require('./score');
+const { Number } = require('./number');
 const { Fruit } = require('./fruit');
 
 // ---------------------------------
@@ -68,10 +68,10 @@ class GameScene extends BaseScene {
 
         this._stage = new Stage();
 
-        this._score = new Score('Score');
-        this._hiScore = new Score('Hi-Score');
-        this._restPacman = new Score('Pacman Left');
-        this._restDot = new Score('Dots left');
+        this._score = new Number('Score');
+        this._hiScore = new Number('Hi-Score');
+        this._restPacman = new Number('Pacman Left');
+        this._restDot = new Number('Dots left');
 
         this._fruit = new Fruit();
 
