@@ -14,7 +14,6 @@ const LEFT = 4;
 const SCENE_TITLE = 1;
 const SCENE_DEMO = 2;
 const SCENE_PLAY = 3;
-// const SCENE_RESTART = 4;
 const SCENE_GAMEOVER = 10;
 
 const PLAY_STANDBY = 1;
@@ -51,7 +50,6 @@ module.exports = {
     SCENE_TITLE,
     SCENE_DEMO,
     SCENE_PLAY,
-    // SCENE_RESTART,
     SCENE_GAMEOVER,
 
     PLAY_STANDBY,
