@@ -18,8 +18,14 @@ class GameOverScene extends BaseScene {
         this._count = 0;
     }
 
-    initSprites(PIXI, container) {
-        this._container = new PIXI.Container();
+    init(PIXI, container) {
+        if (!this._container) {
+            // コンテナがまだなければ作る
+            this._container = new PIXI.Container();
+            container.addChild(this._container);
+        }
+
+        this._container.removeChildren();   // 中身をクリア
 
         this._gameOverMsg
             .initSprite(PIXI, this._container)
@@ -27,8 +33,6 @@ class GameOverScene extends BaseScene {
             .setFontSize(150)
             .setColor('white')  // or setColor('#ffffff') is also OK
             .setPos(350, 300);
-        
-        container.addChild(this._container);
 
         this._count = 0;
         this.setVisible(true);

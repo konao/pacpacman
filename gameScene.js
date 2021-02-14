@@ -56,7 +56,7 @@ class GameScene {
         this._fruit = null;
     }
 
-    initStage(PIXI, container) {
+    init(PIXI, container) {
         this._PIXI = PIXI;
         this._parentContainer = container;
         

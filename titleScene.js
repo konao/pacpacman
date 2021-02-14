@@ -20,7 +20,7 @@ class TitleScene extends BaseScene {
         this._startPressed = false;
     }
 
-    initSprites(PIXI, container) {
+    init(PIXI, container) {
         this._container = new PIXI.Container();
 
         this._mainTitle

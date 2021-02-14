@@ -5,10 +5,7 @@
 const PIXI = require('pixi.js');
 
 class BaseScene {
-    initSprites(PIXI, container) {
-    }
-
-    activate(b) {
+    init(PIXI, container) {
     }
 
     onUpPressed() {
@@ -32,6 +29,9 @@ class BaseScene {
     // そうでない場合はnullを返す
     update() {
         return null;
+    }
+
+    cleanUp() {
     }
 }
 

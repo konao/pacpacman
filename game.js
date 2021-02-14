@@ -27,7 +27,7 @@ class Game {
     }
 
     initSprites(PIXI, container) {
-        this._titleScene.initSprites(PIXI, container);
+        this._titleScene.init(PIXI, container);
     }
 
     onUpPressed() {
@@ -71,7 +71,7 @@ class Game {
                 switch (nextScene) {
                     case C.SCENE_TITLE:
                         // タイトル画面
-                        this._titleScene.initSprites(PIXI, container);
+                        this._titleScene.init(PIXI, container);
                         this._titleScene.setVisible(true);
                         this._currScene = this._titleScene;
                         break;
@@ -82,7 +82,7 @@ class Game {
     
                     case C.SCENE_PLAY:
                         // プレイ中
-                        this._gameScene.initStage(PIXI, container);
+                        this._gameScene.init(PIXI, container);
                         this._gameScene.setupNewStage();
                         this._gameScene.initSprites();
                         this._gameScene.setVisible(true);
@@ -102,7 +102,7 @@ class Game {
                         // ゲームオーバー
                         container.removeChildren();
 
-                        this._gameOverScene.initSprites(PIXI, container);
+                        this._gameOverScene.init(PIXI, container);
                         this._currScene = this._gameOverScene;
 
                         break;
