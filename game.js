@@ -21,13 +21,28 @@ class Game {
         this._gameOverScene = new GameOverScene();
     }
 
-    initGame() {
+    initGame(PIXI, container) {
         // 最初のシーンオブジェクトをセット
         this._currScene = this._titleScene;
+
+        // 初期化
+        this._currScene.init(PIXI, container);
     }
 
-    initSprites(PIXI, container) {
-        this._titleScene.init(PIXI, container);
+    getScene(sceneID) {
+        switch (sceneID) {
+            case C.SCENE_TITLE:
+                return this._titleScene;
+            
+            case C.SCENE_PLAY:
+                return this._gameScene;
+            
+            case C.SCENE_GAMEOVER:
+                return this._gameOverScene;
+            
+            default:
+                return null;
+        }
     }
 
     onUpPressed() {
@@ -63,49 +78,19 @@ class Game {
     gameLoop(PIXI, container) {
         if (this._currScene) {
             // 現在のシーンオブジェクトに処理を実行させる
-            let nextScene = this._currScene.update();
+            let nextSceneID = this._currScene.update();
 
-            if (nextScene) {
-                // console.log(`nextMode=${nextMode}`);
-                // シーン変更なら新しいシーンオブジェクトに切り替える
-                switch (nextScene) {
-                    case C.SCENE_TITLE:
-                        // タイトル画面
-                        this._titleScene.init(PIXI, container);
-                        this._titleScene.setVisible(true);
-                        this._currScene = this._titleScene;
-                        break;
+            if (nextSceneID) {
+                let nextScene = this.getScene(nextSceneID);
+                if (nextScene) {
+                    // console.log(`nextMode=${nextMode}`);
+                    // シーン変更なら新しいシーンオブジェクトに切り替える
+                    this._currScene.cleanUp();
+                    this._currScene.setVisible(false);
 
-                    case C.SCENE_DEMO:
-                        // デモプレイ画面
-                        break;
-    
-                    case C.SCENE_PLAY:
-                        // プレイ中
-                        this._gameScene.init(PIXI, container);
-                        this._gameScene.setupNewStage();
-                        this._gameScene.initSprites();
-                        this._gameScene.setVisible(true);
-
-                        this._currScene = this._gameScene;
-                        break;
-                    
-                    case C.SCENE_RESTART:
-                        // 再スタート画面
-                        this._gameScene.restartStage();
-                        // this._gameScene.setVisible(true);
-
-                        this._currScene = this._gameScene;
-                        break;
-                        
-                    case C.SCENE_GAMEOVER:
-                        // ゲームオーバー
-                        container.removeChildren();
-
-                        this._gameOverScene.init(PIXI, container);
-                        this._currScene = this._gameOverScene;
-
-                        break;
+                    nextScene.init(PIXI, container);
+                    nextScene.setVisible(true);
+                    this._currScene = nextScene;
                 }
             }
         }

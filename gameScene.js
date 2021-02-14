@@ -3,6 +3,7 @@
 // **********************************************
 
 const C = require('./const');
+const { BaseScene } = require('./baseScene');
 const { Stage, SPACE, WALL, DOT, POWER_FOOD, FRUIT } = require('./stage');
 const { Pacman } = require('./pacman');
 const Utils = require('./utils');
@@ -14,8 +15,10 @@ const { Fruit } = require('./fruit');
 // ---------------------------------
 // ゲーム本体制御
 // ---------------------------------
-class GameScene {
+class GameScene extends BaseScene {
     constructor() {
+        super();
+
         this._PIXI = null;  // PIXIオブジェクト
         this._parentContainer = null;   // 親コンテナ
         this._container = null; // このシーンのスプライトを格納するコンテナ
@@ -71,6 +74,9 @@ class GameScene {
         this._restDot = new Score('Dots left');
 
         this._fruit = new Fruit();
+
+        this.setupNewStage();
+        this.initSprites();
     }
 
     setupNewStage() {
@@ -328,7 +334,8 @@ class GameScene {
                             // まだいるならリスタート
                             this._pacman.stopDyingAnim();
                             this._state = C.PLAY_STANDBY;
-                            return C.SCENE_RESTART;
+                            this.restartStage();
+                            // return C.SCENE_RESTART;
                         }
                     }
                 }

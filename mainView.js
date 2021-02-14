@@ -32,11 +32,10 @@ loader.load((loader, resources) => {
     const w = window.innerWidth;
     const h = window.innerHeight;
 
-    game.initGame();
-
     let container = new PIXI.Container();
-    game.initSprites(PIXI, container);
     app.stage.addChild(container);
+
+    game.initGame(PIXI, container);
 
     // app.ticker.speed = 0.2;  // 効かなかった
     app.ticker.add((delta) => {
