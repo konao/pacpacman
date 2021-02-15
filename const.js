@@ -29,14 +29,14 @@ const MIDSUKE = 3;
 const GUZUTA = 4;
 const IJIKE = 5;
 
-const CHERRY = 1;
-const STRAWBERRY = 2;
-const ORANGE = 3;
-const APPLE = 4;
-const MELON = 5;
-const GALAXIAN = 6;
-const BELL = 7;
-const KEY = 8;
+const CHERRY = 0;
+const STRAWBERRY = 1;
+const ORANGE = 2;
+const APPLE = 3;
+const MELON = 4;
+const GALAXIAN = 5;
+const BELL = 6;
+const KEY = 7;
 
 module.exports = {
     IMGW,

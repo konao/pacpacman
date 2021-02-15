@@ -71,6 +71,16 @@ class Entity {
     setDirec(direc) {
         this._direc = direc;
     }
+
+    // @param pos 衝突判定対象位置({x, y})
+    //
+    // @return true(=衝突している), false(=していない)
+    detectCollision(pos) {
+        let dist2 = Math.pow((pos.x - this._x), 2) + Math.pow((pos.y - this._y), 2);
+        let d = Math.pow(0.9, 2);
+
+        return (dist2 < d) ? true : false;
+    }
 }
 
 module.exports = {

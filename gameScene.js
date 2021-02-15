@@ -46,7 +46,7 @@ class GameScene extends BaseScene {
         this._state = null;
 
         // パックマンの残り数
-        this._pacRest = 2;
+        this._pacRest = 0;
 
         // ドット残り数
         this._dotRest = 0;
@@ -63,6 +63,9 @@ class GameScene extends BaseScene {
         this._PIXI = PIXI;
         this._parentContainer = container;
         
+        this._scoreValue = 0;
+        this._pacRest = 2;  // ゲーム開始時のパックマンの残り数
+
         // 状態
         this._state = C.PLAY_STANDBY;
 
@@ -255,6 +258,25 @@ class GameScene extends BaseScene {
                             }
                         }
 
+                        if (this._fruit.getVisible() && this._fruit.detectCollision(this._pacman.getPos())) {
+                            // フルーツを食べた
+                            this._fruit.setVisible(false);
+
+                            // 次に出現するフルーツを変える
+                            this._fruit.setKindToNext();
+
+                            // 点数更新
+                            this._scoreValue += this._fruit.getFruitPoint();                            
+                            this._score.setValue(this._scoreValue);
+                            if (this._scoreValue > this._hiscoreValue) {
+                                // ハイスコア更新
+                                this._hiscoreValue = this._scoreValue;
+                                this._hiScore.setValue(this._hiscoreValue);
+                            }
+
+                            console.log(`** I got a fruit! (bonus=${this._fruit.getFruitPoint()}) **`);
+                        }
+
                         if (this._dotRest <= 0) {
                             // 面クリア
                             this._state = C.PLAY_SCENE_CLEARED;
@@ -309,6 +331,10 @@ class GameScene extends BaseScene {
                             this.setupNewStage();
                             this.initSprites();
                             this.setVisible(true);
+
+                            // 1面ごとにフルーツを変える
+                            // this._fruit.setKindToNext();
+                            // this._fruit.setVisible(false);
     
                             this._state = C.PLAY_STANDBY;
                         } else {
@@ -335,7 +361,6 @@ class GameScene extends BaseScene {
                             this._pacman.stopDyingAnim();
                             this._state = C.PLAY_STANDBY;
                             this.restartStage();
-                            // return C.SCENE_RESTART;
                         }
                     }
                 }

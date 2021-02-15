@@ -47,17 +47,25 @@ class Fruit extends Entity {
     updateSprite() {
         if (this._sprs.length > 0) {
             let pSprite = this._sprs[this._kind];
-
-            let px = Math.floor(this._x * C.IMGW);
-            let py = Math.floor(this._y * C.IMGW);
-
-            pSprite.x = px;
-            pSprite.y = py;
+            if (pSprite) {
+                let px = Math.floor(this._x * C.IMGW);
+                let py = Math.floor(this._y * C.IMGW);
+    
+                pSprite.x = px;
+                pSprite.y = py;
+            }
         }
     }
 
     setKind(kind) {
         this._kind = kind;
+    }
+
+    setKindToNext() {
+        this._kind++;
+        if (this.kind > C.KEY) {
+            this.kind = C.CHERRY;
+        }
     }
 
     setVisible(bVisible) {
@@ -74,8 +82,12 @@ class Fruit extends Entity {
         return this._visible;
     }
 
+    getFruitPoint() {
+        return this._kind * 500;
+    }
+
     initShowCount() {
-        this._showCount = 50;
+        this._showCount = 500;
     }
 
     updateShowCount() {

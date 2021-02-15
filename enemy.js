@@ -275,16 +275,6 @@ class Enemy extends Entity {
         return retVal;
     }
 
-    // @param pos 衝突判定対象位置({x, y})
-    //
-    // @return true(=衝突している), false(=していない)
-    detectCollision(pos) {
-        let dist2 = Math.pow((pos.x - this._x), 2) + Math.pow((pos.y - this._y), 2);
-        let d = Math.pow(0.9, 2);
-
-        return (dist2 < d) ? true : false;
-    }
-
     updateSprite() {
         if (this._sprs.length > 0) {
             let curIdx = this.getSprIdxFromDir(this._direc);
