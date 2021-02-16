@@ -11,6 +11,7 @@ const { Enemy } = require('./enemy');
 const { Text } = require('./text');
 const { Number } = require('./number');
 const { Fruit } = require('./fruit');
+const { PowerFood } = require('./powerFood');
 
 // ---------------------------------
 // ゲーム本体制御
@@ -41,6 +42,9 @@ class GameScene extends BaseScene {
 
         // 敵
         this._enemies = [];
+
+        // パワーえさ
+        this._powerFoods = [];
 
         // 状態
         this._state = null;
@@ -104,10 +108,19 @@ class GameScene extends BaseScene {
             this._enemies.push(enemy);
         }
 
+        // パックマン
         this._pacman = new Pacman();
         let p = this.findNewPosForPacman();
         this._pacman.setPos(p);
         this._pacman.setStage(this._stage);
+
+        // パワーえさ
+        let powerFoodPosList = this.findPosForPowerFoods();
+        this._powerFoods = powerFoodPosList.map((p) => {
+            let pf = new PowerFood();
+            pf.setCellPos(p);
+            return pf;
+        });
 
         this._pacman.startStandbyAnim();
     }
@@ -140,6 +153,15 @@ class GameScene extends BaseScene {
         return p;
     }
 
+    // パワーえさを出現させる位置を計算
+    findPosForPowerFoods() {
+        // パワーえさの数
+        const nPowerFoods = 5;
+        let pfPosList = this._stage.getRandomWayPoints(nPowerFoods);
+
+        return pfPosList;
+    }
+
     // @param PIXI [i] PIXIオブジェクト
     initSprites() {
         let PIXI = this._PIXI;
@@ -162,27 +184,39 @@ class GameScene extends BaseScene {
             this._enemies[i].initSprite(PIXI, this._container);
         }
 
+        // スコア
         this._score.initSprite(PIXI, this._container);
         this._score.setPos(1150, 20);
         this._score.setFontSize(30);
         this._score.setValue(this._scoreValue);
 
+        // ハイスコア
         this._hiScore.initSprite(PIXI, this._container);
         this._hiScore.setPos(1150, 100);
         this._hiScore.setFontSize(30);
         this._hiScore.setValue(this._hiscoreValue);
 
+        // 残りパックマン数
         this._restPacman.initSprite(PIXI, this._container);
         this._restPacman.setPos(1150, 300);
         this._restPacman.setFontSize(30);
         this._restPacman.setValue(this._pacRest);
 
+        // 残りドット数
         this._restDot.initSprite(PIXI, this._container);
         this._restDot.setPos(1150, 400);
         this._restDot.setFontSize(30);
         this._restDot.setValue(this._dotRest);
 
+        // フルーツ
         this._fruit.initSprite(PIXI, this._container);
+
+        // パワーえさ
+        this._powerFoods.forEach((pf) => {
+            pf.initSprite(PIXI, this._container);
+            pf.updateSprite();
+            pf.setVisible(true);
+        })
 
         this._parentContainer.addChild(this._container);
         this.setVisible(false);

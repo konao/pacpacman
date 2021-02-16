@@ -16,6 +16,14 @@
             "sourceSize": {"w":26,"h":26},
             "pivot": {"x":0.5,"y":0.5}
         },
+        "powerFood": {
+            "frame": {"x":26,"y":260,"w":26,"h":26},
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {"x":0,"y":0,"w":26,"h":26},
+            "sourceSize": {"w":26,"h":26},
+            "pivot": {"x":0.5,"y":0.5}
+        },
         "pac00": {
             "frame": {"x":0,"y":182,"w":26,"h":26},
             "rotated": false,
