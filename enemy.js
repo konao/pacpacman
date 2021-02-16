@@ -20,8 +20,14 @@ class Enemy extends Entity {
         // アニメーションカウント
         this._animCount = 0;
 
-        // スプライトコンテナ
-        this._sprs = [];
+        // スプライトコンテナ（追いかけ）
+        this._chaseingSprs = [];
+
+        // スプライトコンテナ（逃げ）
+        this._escapeingSprs = [];
+
+        // 追いかけモードか？
+        this._isChasing = true;
 
         // 現在のスプライトインデックス
         // this._curIdx = -1;
@@ -38,12 +44,47 @@ class Enemy extends Entity {
         return this._direc;
     }
 
+    changeChasingMode(bChasing) {
+        this._isChasing = bChasing; // モードを変える
+
+        // 現在のモードのスプライトの表示状態をセット
+        let sprs = this.getSprs();
+        if (sprs.length > 0) {
+            sprs.forEach(spr => {
+                spr.visible = false;
+            });
+
+            let curIdx = this.getSprIdxFromDir(this._direc);
+            if (curIdx >= 0) {
+                let pSprite = sprs[curIdx];
+                pSprite.visible = true;
+            }
+        }
+
+        // 反対のモードのスプライトは全部消す
+        let otherSprs = this.getSprs(!this.isChasing());
+        if (otherSprs.length > 0) {
+            otherSprs.forEach(spr => {
+                spr.visible = false;
+            });
+        }
+    }
+
+    isChasing() {
+        return this._isChasing;
+    }
+
+    getSprs(bChasing = this._isChasing) {   // これOK?
+        return (bChasing) ? this._chaseingSprs : this._escapeingSprs;
+    }
+
     // モンスターのスプライトを生成する．
     //
     // スプライトを生成してcontainerとthis._sprsにセットする.
     // モンスターの種類(this._kind)を参照する．
     initSprite(PIXI, container) {
-        this._sprs = [];
+        this._chaseingSprs = [];
+        this._escapeingSprs = [];
 
         let cname = '';
         switch (this._kind) {
@@ -70,27 +111,32 @@ class Enemy extends Entity {
                     cname = 'y';    // yellow
                     break;
                 }
-            
-            case C.IJIKE:
-                {
-                    cname = 'b';    // blue
-                    break;
-                }
         }
 
+        // 追いかけスプライト
         for (let i=0; i<4; i++) {
             let sprName = cname + i.toString();
             let m = new PIXI.Sprite(PIXI.Texture.from(sprName));
             m.visible = false;
             container.addChild(m);
-            this._sprs.push(m);
+            this._chaseingSprs.push(m);
+        }
+
+        // 逃げスプライト
+        for (let i=0; i<4; i++) {
+            let sprName = 'b' + i.toString();
+            let m = new PIXI.Sprite(PIXI.Texture.from(sprName));
+            m.visible = false;
+            container.addChild(m);
+            this._escapeingSprs.push(m);
         }
     }
 
     setVisible(bVisible) {
         let curIdx = this.getSprIdxFromDir(this._direc);
         if (curIdx >= 0) {
-            let pSprite = this._sprs[curIdx];
+            let sprs = this.getSprs();
+            let pSprite = sprs[curIdx];
             if (pSprite) {
                 pSprite.visible = bVisible;
             }
@@ -114,6 +160,8 @@ class Enemy extends Entity {
     }
 
     move(pacPos) {
+        let sprs = this.getSprs();
+
         // console.log(`move (${this._x}, ${this._y})`);
         if (this._direc == C.NODIR) {
             // 移動方向が決まっていない
@@ -147,7 +195,7 @@ class Enemy extends Entity {
                     // 今まで表示していたスプライトの表示フラグをoffにする
                     let curIdx = this.getSprIdxFromDir(this._direc);
                     if (curIdx >= 0) {
-                        let pSprite = this._sprs[curIdx];
+                        let pSprite = sprs[curIdx];
                         if (pSprite) {
                             pSprite.visible = false;
                         }
@@ -162,7 +210,7 @@ class Enemy extends Entity {
                     // 新しいスプライトの表示フラグをonにする
                     curIdx = this.getSprIdxFromDir(this._direc);
                     if (curIdx >= 0) {
-                        let pSprite = this._sprs[curIdx];
+                        let pSprite = sprs[curIdx];
                         if (pSprite) {
                             pSprite.visible = true;
                         }
@@ -276,10 +324,11 @@ class Enemy extends Entity {
     }
 
     updateSprite() {
-        if (this._sprs.length > 0) {
+        let sprs = this.getSprs();
+        if (sprs.length > 0) {
             let curIdx = this.getSprIdxFromDir(this._direc);
             if (curIdx >= 0) {
-                let pSprite = this._sprs[curIdx];
+                let pSprite = sprs[curIdx];
 
                 let px = Math.floor(this._x * C.IMGW);
                 let py = Math.floor(this._y * C.IMGW);

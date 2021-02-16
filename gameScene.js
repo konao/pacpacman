@@ -263,8 +263,9 @@ class GameScene extends BaseScene {
                     // パックマン移動
                     if (this._pacman) {
                         this._pacman.move();
-            
-                        let eatCount = this._pacman.detectCollision(this._stage);
+
+                        // ドット処理
+                        let eatCount = this._pacman.detectCollisionWithDot(this._stage);
                         this._scoreValue += eatCount * 10;
                         this._score.setValue(this._scoreValue);
                         if (this._scoreValue > this._hiscoreValue) {
@@ -292,7 +293,7 @@ class GameScene extends BaseScene {
                             }
                         }
 
-                        if (this._fruit.getVisible() && this._fruit.detectCollision(this._pacman.getPos())) {
+                        if (this._fruit.getVisible() && this._pacman.detectCollision(this._fruit.getPos())) {
                             // フルーツを食べた
                             this._fruit.setVisible(false);
 
@@ -313,9 +314,34 @@ class GameScene extends BaseScene {
 
                         // パワーえさ処理
                         this._powerFoods.forEach((pf) => {
-                            // 点滅させる
-                            pf.updateShowCount();
-                        })
+                            if (pf.getValid()) {
+                                // 点滅させる
+                                pf.updateShowCount();
+
+                                // 衝突判定
+                                if (this._pacman.detectCollision(pf.getPos())) {
+                                    // パワーえさを食べた
+                                    pf.setValid(false); // もはや食べられてしまった
+                                    pf.setVisible(false);   // 表示も消す
+
+                                    // 点数加算
+                                    this._scoreValue += 1000;
+                                    console.log(`** I got a power food! **`);
+
+                                    this._score.setValue(this._scoreValue);
+                                    if (this._scoreValue > this._hiscoreValue) {
+                                        // ハイスコア更新
+                                        this._hiscoreValue = this._scoreValue;
+                                        this._hiScore.setValue(this._hiscoreValue);
+                                    }
+            
+                                    // 敵の移動モードを変える
+                                    this._enemies.forEach((enemy) => {
+                                        enemy.changeChasingMode(false); // 逃げモードに変更
+                                    });
+                                }
+                            }
+                        });
 
                         if (this._dotRest <= 0) {
                             // 面クリア

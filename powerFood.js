@@ -14,11 +14,23 @@ class PowerFood extends Entity {
         // スプライト
         this._spr = null;
 
+        // 有効フラグ
+        // (true=食べられていない, false=すでに食べられた）
+        this._valid = true;
+
         // 表示中フラグ
         this._visible = false;
 
         // 表示カウント
         this._showCount = 0;
+    }
+
+    setValid(bValid) {
+        this._valid = bValid;
+    }
+
+    getValid() {
+        return this._valid;
     }
 
     // パワーえさのスプライトを生成する．

@@ -315,7 +315,7 @@ class Pacman extends Entity {
     }
 
     // 衝突判定
-    detectCollision(stage) {
+    detectCollisionWithDot(stage) {
         let eatCount = 0;
 
         let x = this._x;
