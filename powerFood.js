@@ -55,7 +55,7 @@ class PowerFood extends Entity {
 
     updateShowCount() {
         this._showCount++;
-        if (this._showCount > 100) {
+        if (this._showCount > 15) {
             this._showCount = 0;
 
             let flg = !this._visible;

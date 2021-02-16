@@ -311,6 +311,12 @@ class GameScene extends BaseScene {
                             console.log(`** I got a fruit! (bonus=${this._fruit.getFruitPoint()}) **`);
                         }
 
+                        // パワーえさ処理
+                        this._powerFoods.forEach((pf) => {
+                            // 点滅させる
+                            pf.updateShowCount();
+                        })
+
                         if (this._dotRest <= 0) {
                             // 面クリア
                             this._state = C.PLAY_SCENE_CLEARED;
