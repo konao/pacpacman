@@ -59,6 +59,9 @@ class GameScene extends BaseScene {
         this._sceneClearedAnimCount = 0;
         this._sceneClearedAnimTimer = 0;
 
+        // パワーアップカウント
+        this._powerUpModeTimer = 0;
+
         // フルーツ
         this._fruit = null;
     }
@@ -259,6 +262,7 @@ class GameScene extends BaseScene {
                 break;
 
             case C.PLAY_NORMAL:
+            case C.PLAY_POWERUP:                
                 {
                     // パックマン移動
                     if (this._pacman) {
@@ -339,6 +343,12 @@ class GameScene extends BaseScene {
                                     this._enemies.forEach((enemy) => {
                                         enemy.changeChasingMode(false); // 逃げモードに変更
                                     });
+
+                                    // パワーアップカウンタ初期化
+                                    this._powerUpModeTimer = 500;
+
+                                    // パワーアップモードへ移行
+                                    this._state = C.PLAY_POWERUP;
                                 }
                             }
                         });
@@ -371,15 +381,29 @@ class GameScene extends BaseScene {
                             }
                         }
                     }
+
+                    // パワーアップモードならタイマー更新
+                    // タイマーが切れたら通常モードへ戻す
+                    if (this._state === C.PLAY_POWERUP) {
+                        if (this._powerUpModeTimer > 0) {
+                            // タイマー更新
+                            this._powerUpModeTimer--;
+                        } else {
+                            // タイマー切れた
+                            this._powerUpModeTimer = 0;
+
+                            // 通常のキャラ移動に戻す
+                            this._enemies.forEach((enemy) => {
+                                enemy.changeChasingMode(true); // 通常モードに変更
+                            });
+
+                            // 通常モードに戻す
+                            this._state = C.PLAY_NORMAL;
+                        }
+                    }
                 }
                 break;
-            
-            case C.PLAY_POWERUP:
-                {
-                    // パワーアップ中
-                }
-                break;
-            
+                        
             case C.PLAY_SCENE_CLEARED:
                 {
                     // 面クリア

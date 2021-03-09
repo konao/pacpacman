@@ -382,7 +382,6 @@ class Pacman extends Entity {
         return true;
     }
 
-
     // 死亡アニメーション開始
     startDyingAnim() {
         // 現在のスプライトを非表示にする
