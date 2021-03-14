@@ -329,8 +329,7 @@ class GameScene extends BaseScene {
                                     pf.setVisible(false);   // 表示も消す
 
                                     // 点数加算
-                                    this._scoreValue += 1000;
-                                    console.log(`** I got a power food! **`);
+                                    this._scoreValue += 500;
 
                                     this._score.setValue(this._scoreValue);
                                     if (this._scoreValue > this._hiscoreValue) {
@@ -364,17 +363,36 @@ class GameScene extends BaseScene {
             
                     // 敵移動
                     if (this._enemies && this._enemies.length > 0) {
-                        // パワーアップモードならtrue
-                        let bPowerupMode = (this._state === C.PLAY_POWERUP);
                         for (let i=0; i<this._enemies.length; i++) {
                             let enemy = this._enemies[i];
-                            enemy.move(this._pacman.getPos(), bPowerupMode);
-                            enemy.updateSprite();
-            
+
+                            // 再出現待機モードか？
+                            if (enemy.isRespawning()) {
+                                enemy.updateRespawnCount(); // カウンタ更新
+
+                                let rc = enemy.getRespawnCount();
+                                if (rc < 100) {
+                                    // モンスター復活前に点滅させる
+                                    let rc2 = Math.trunc(rc / 10);
+                                    if (rc2 % 2 === 0) {    // 2で割った余り
+                                        enemy.setVisible(true);
+                                    } else {
+                                        enemy.setVisible(false);
+                                    }
+                                }
+                                if (rc === 0) {
+                                    enemy.changeChasingMode(true); // 通常モードに戻す
+                                }
+                            } else {
+                                // 通常モード
+                                enemy.move(this._pacman.getPos());
+                                enemy.updateSprite();
+                            }
+
                             // 衝突判定
                             if (enemy.detectCollision(this._pacman.getPos())) {
                                 // 敵と接触
-                                if (!bPowerupMode) {
+                                if (enemy.isChasing()) {
                                     // 通常モード
                                     this._pacRest--;
                                     this._restPacman.setValue(this._pacRest);
@@ -383,9 +401,25 @@ class GameScene extends BaseScene {
                                     this._pacman.startDyingAnim();
                                     break;
                                 } else {
-                                    // パワーアップモード
+                                    // 逃げモード
 
-                                    // 点数加算
+                                    if (!enemy.isRespawning()) {
+                                        // 再出現待機中でなければ点数加算
+                                        this._scoreValue += 1000;
+
+                                        this._score.setValue(this._scoreValue);
+                                        if (this._scoreValue > this._hiscoreValue) {
+                                            // ハイスコア更新
+                                            this._hiscoreValue = this._scoreValue;
+                                            this._hiScore.setValue(this._hiscoreValue);
+                                        }
+
+                                        // このモンスターの新しい位置を計算
+
+                                        // 再出現カウントをセットして待機モードにする
+                                        enemy.setRespawnCount(500);
+                                        enemy.setVisible(false);
+                                    }
                                 }
                             }
                         }

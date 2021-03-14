@@ -17,23 +17,22 @@ class Enemy extends Entity {
         // 進行方向
         this._direc = C.NODIR;
 
-        // アニメーションカウント
-        this._animCount = 0;
-
         // スプライトコンテナ（追いかけ）
         this._chaseingSprs = [];
 
         // スプライトコンテナ（逃げ）
         this._escapeingSprs = [];
 
-        // 追いかけモードか？
+        // true = 追いかけモード（通常モード）
+        // false = 逃げモード
         this._isChasing = true;
-
-        // 現在のスプライトインデックス
-        // this._curIdx = -1;
 
         // 移動目標点
         this._dest = {x: 0, y: 0};
+
+        // 再出現カウント
+        // このカウンタが0より大きいときは再出現待機状態
+        this._respawnCount = 0;
     }
 
     setDirec(direc) {
@@ -72,6 +71,26 @@ class Enemy extends Entity {
 
     isChasing() {
         return this._isChasing;
+    }
+
+    setRespawnCount(c) {
+        this._respawnCount = c;
+    }
+
+    getRespawnCount() {
+        return this._respawnCount;
+    }
+
+    isRespawning() {
+        return (this._respawnCount > 0);
+    }
+
+    updateRespawnCount() {
+        if (this._respawnCount > 0) {
+            this._respawnCount--;
+        } else {
+            this._respawnCount = 0;
+        }
     }
 
     getSprs(bChasing = this._isChasing) {   // これOK?
@@ -160,8 +179,7 @@ class Enemy extends Entity {
     }
 
     // @param pacPos [i] パックマンの位置
-    // @param bPowerupMode [i] true=パワーアップモード, false=通常モード
-    move(pacPos, bPowerupMode) {
+    move(pacPos) {
         let sprs = this.getSprs();
 
         // console.log(`move (${this._x}, ${this._y})`);
@@ -169,7 +187,7 @@ class Enemy extends Entity {
             // 移動方向が決まっていない
 
             // 移動目標点を計算
-            let dp = this.calcDestPoint(pacPos, bPowerupMode);
+            let dp = this.calcDestPoint(pacPos);
             if (dp) {
                 // console.log(`[1] dp=(direc=${dp.direc}, x=${dp.x}, y=${dp.y}`);
 
@@ -190,7 +208,7 @@ class Enemy extends Entity {
             // console.log(`(${this._x}, ${this._y}) - dest=(${this._dest.x}, ${this._dest.y})`);
             if (U.isEqual(this._x, this._dest.x) && U.isEqual(this._y, this._dest.y)) {
                 // 移動目標点再計算
-                let dp = this.calcDestPoint(pacPos, bPowerupMode);
+                let dp = this.calcDestPoint(pacPos);
                 if (dp) {
                     // console.log(`[2] dp=(direc=${dp.direc}, x=${dp.x}, y=${dp.y}`);
 
@@ -224,14 +242,13 @@ class Enemy extends Entity {
 
     // 現在の位置(this._x, this._y)から、パックマンの位置(pacPos)に到達するために
     // 移動するべき目標点と進行方向を返す
-    // bPowerupMode=trueの時、パワーアップモード
     //
     // @return {
     //    x,    // 目標点
     //    y,
     //    direc // 進行方向
     // }
-    calcDestPoint(pacPos, bPowerupMode) {
+    calcDestPoint(pacPos) {
         // 全方向
         const alldirec = [C.UP, C.RIGHT, C.DOWN, C.LEFT];
 
@@ -308,14 +325,14 @@ class Enemy extends Entity {
             }
         } else {
             let updateDistp = null; // 距離を更新するか？を判断する関数
-            if (!bPowerupMode) {
+            if (this._isChasing) {
                 // 通常モード
                 // パックマンに最も近い方向を選ぶ
                 updateDistp = (newDist, dist) => {
                     return (newDist < dist);
                 }
             } else {
-                // パワーアップモード
+                // 逃げモード
                 // パックマンから最も遠い方向を選ぶ
                 updateDistp = (newDist, dist) => {
                     return (newDist > dist);
