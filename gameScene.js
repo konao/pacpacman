@@ -364,20 +364,29 @@ class GameScene extends BaseScene {
             
                     // 敵移動
                     if (this._enemies && this._enemies.length > 0) {
+                        // パワーアップモードならtrue
+                        let bPowerupMode = (this._state === C.PLAY_POWERUP);
                         for (let i=0; i<this._enemies.length; i++) {
                             let enemy = this._enemies[i];
-                            enemy.move(this._pacman.getPos());
+                            enemy.move(this._pacman.getPos(), bPowerupMode);
                             enemy.updateSprite();
             
                             // 衝突判定
                             if (enemy.detectCollision(this._pacman.getPos())) {
-                                // 捕まった
-                                this._pacRest--;
-                                this._restPacman.setValue(this._pacRest);
+                                // 敵と接触
+                                if (!bPowerupMode) {
+                                    // 通常モード
+                                    this._pacRest--;
+                                    this._restPacman.setValue(this._pacRest);
 
-                                this._state = C.PLAY_DYING;
-                                this._pacman.startDyingAnim();
-                                break;
+                                    this._state = C.PLAY_DYING;
+                                    this._pacman.startDyingAnim();
+                                    break;
+                                } else {
+                                    // パワーアップモード
+
+                                    // 点数加算
+                                }
                             }
                         }
                     }

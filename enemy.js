@@ -159,7 +159,9 @@ class Enemy extends Entity {
         }
     }
 
-    move(pacPos) {
+    // @param pacPos [i] パックマンの位置
+    // @param bPowerupMode [i] true=パワーアップモード, false=通常モード
+    move(pacPos, bPowerupMode) {
         let sprs = this.getSprs();
 
         // console.log(`move (${this._x}, ${this._y})`);
@@ -167,7 +169,7 @@ class Enemy extends Entity {
             // 移動方向が決まっていない
 
             // 移動目標点を計算
-            let dp = this.calcDestPoint(pacPos);
+            let dp = this.calcDestPoint(pacPos, bPowerupMode);
             if (dp) {
                 // console.log(`[1] dp=(direc=${dp.direc}, x=${dp.x}, y=${dp.y}`);
 
@@ -188,7 +190,7 @@ class Enemy extends Entity {
             // console.log(`(${this._x}, ${this._y}) - dest=(${this._dest.x}, ${this._dest.y})`);
             if (U.isEqual(this._x, this._dest.x) && U.isEqual(this._y, this._dest.y)) {
                 // 移動目標点再計算
-                let dp = this.calcDestPoint(pacPos);
+                let dp = this.calcDestPoint(pacPos, bPowerupMode);
                 if (dp) {
                     // console.log(`[2] dp=(direc=${dp.direc}, x=${dp.x}, y=${dp.y}`);
 
@@ -222,12 +224,14 @@ class Enemy extends Entity {
 
     // 現在の位置(this._x, this._y)から、パックマンの位置(pacPos)に到達するために
     // 移動するべき目標点と進行方向を返す
+    // bPowerupMode=trueの時、パワーアップモード
+    //
     // @return {
     //    x,    // 目標点
     //    y,
     //    direc // 進行方向
     // }
-    calcDestPoint(pacPos) {
+    calcDestPoint(pacPos, bPowerupMode) {
         // 全方向
         const alldirec = [C.UP, C.RIGHT, C.DOWN, C.LEFT];
 
@@ -303,13 +307,26 @@ class Enemy extends Entity {
                 direc: cand.direc
             }
         } else {
-            // 最短の方向を選ぶ
-            // console.log('nearest');
-            let minDist2 = -1;
+            let updateDistp = null; // 距離を更新するか？を判断する関数
+            if (!bPowerupMode) {
+                // 通常モード
+                // パックマンに最も近い方向を選ぶ
+                updateDistp = (newDist, dist) => {
+                    return (newDist < dist);
+                }
+            } else {
+                // パワーアップモード
+                // パックマンから最も遠い方向を選ぶ
+                updateDistp = (newDist, dist) => {
+                    return (newDist > dist);
+                }
+            }
+
+            let dist = -1;   
             for (let cand of cands) {
                 if (cand.dist2 > 0) {
-                    if (minDist2 < 0 || cand.dist2 < minDist2) {
-                        minDist2 = cand.dist2;
+                    if (dist < 0 || updateDistp(cand.dist2, dist)) {
+                        dist = cand.dist2;
                         retVal = {
                             x: cand.destPos.x,
                             y: cand.destPos.y,
