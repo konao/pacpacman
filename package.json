@@ -1,9 +1,11 @@
 {
-  "name": "ex1",
+  "name": "pacpacman",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
   "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . --overwrite --platform=win32 --arch=x64 --out=release-builds --icon=icon.ico",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,5 +15,9 @@
     "@types/pixi.js": "^5.0.0",
     "jquery": "^3.5.1",
     "pixi.js": "^5.2.4"
+  },
+  "devDependencies": {
+    "electron": "^35.1.4",
+    "electron-packager": "^17.1.2"
   }
 }
